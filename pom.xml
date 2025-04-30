@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ewaypayments</groupId>
+    <groupId>nz.net.charge</groupId>
     <artifactId>eway-rapid-java</artifactId>
-    <version>1.4.2</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>eWAY Rapid API Library</name>
@@ -20,6 +21,10 @@
             <organization>eWAY</organization>
             <organizationUrl>https://www.eway.com.au</organizationUrl>
         </developer>
+        <developer>
+            <organization>ChargeNet NZ</organization>
+            <organizationUrl>https://charge.net.nz</organizationUrl>
+        </developer>
     </developers>
     <licenses>
         <license>
@@ -29,9 +34,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git@github.com:eWAYPayment/eway-rapid-java.git</connection>
-        <developerConnection>scm:git@github.com:eWAYPayment/eway-rapid-java.git</developerConnection>
-        <url>git@github.com:eWAYPayment/eway-rapid-java.git</url>
+        <connection>scm:git@github.com:ChargeNet-NZ/eway-rapid-java.git</connection>
+        <developerConnection>scm:git@github.com:ChargeNet-NZ/eway-rapid-java.git</developerConnection>
+        <url>git@github.com:ChargeNet-NZ/eway-rapid-java.git</url>
     </scm>
     <distributionManagement>
         <snapshotRepository>
@@ -45,24 +50,28 @@
     </distributionManagement>
     
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <jackson-bom.version>2.15.0</jackson-bom.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <slf4j.version>1.7.36</slf4j.version>
+        <spring-boot.version>3.0.13</spring-boot.version>
     </properties>
 
     <dependencies>
         <!-- A bundle containing code of all jar-based modules that provide JAX-RS
-        and Jersey-related features -->
+        and WebFlux related features -->
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-bundle</artifactId>
-            <version>1.19</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <!-- The Commons IO library contains utility classes, stream implementations,
         file filters, file comparators, endian transformation classes, and much more -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
+            <version>${commons-lang3.version}</version>
         </dependency>
         <!-- JUnit is a unit testing framework for Java, created by Erich Gamma
         and Kent Beck -->
@@ -79,27 +88,20 @@
             <version>3.27.3</version>
             <scope>test</scope>
         </dependency>
-        <!-- Jersey JSON Jackson (2.x) entity providers support module -->
-        <!---->
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
-            <version>2.25.1</version>
-        </dependency>
         <!-- Apache Commons Validator provides the building blocks for both client
         side validation and server side data validation. It may be used standalone
         or with a framework like Struts -->
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.6</version>
+            <version>1.9.0</version>
         </dependency>
         <!-- The Simple Logging Facade for Java (SLF4J) serves as a simple facade
         or abstraction for various logging frameworks -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.26</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <!-- SLF4J Simple binding -->
         <dependency>
@@ -110,12 +112,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.9.9</version>
+            <version>${jackson-bom.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>[2.9.9.2,2.10)</version>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.6</version>
         </dependency>
     </dependencies>
 
