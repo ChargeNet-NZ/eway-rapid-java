@@ -19,6 +19,9 @@ import com.eway.payment.rapid.sdk.integration.IntegrationTest;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
 import com.eway.payment.rapid.sdk.output.QueryTransactionResponse;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class TransactionFilterTest extends IntegrationTest {
 
     private RapidClient client;
@@ -36,7 +39,8 @@ public class TransactionFilterTest extends IntegrationTest {
         Customer c = InputModelFactory.initCustomer();
         Address a = InputModelFactory.initAddress();
         PaymentDetails p = InputModelFactory.initPaymentDetails();
-        CardDetails cd = InputModelFactory.initCardDetails("12", "24");
+        final String futureYear = LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("yy"));
+        CardDetails cd = InputModelFactory.initCardDetails("12", futureYear);
         c.setCardDetails(cd);
         c.setAddress(a);
         trans.setCustomer(c);
@@ -77,7 +81,8 @@ public class TransactionFilterTest extends IntegrationTest {
         String invoiceNum = InputModelFactory.randomString(10);
         String invoiceRef = InputModelFactory.randomString(10);
         PaymentDetails p = InputModelFactory.initPaymentDetails(invoiceNum, invoiceRef);
-        CardDetails cd = InputModelFactory.initCardDetails("12", "24");
+        final String futureYear = LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("yy"));
+        CardDetails cd = InputModelFactory.initCardDetails("12", futureYear);
         c.setCardDetails(cd);
         c.setAddress(a);
         trans.setCustomer(c);
@@ -110,7 +115,8 @@ public class TransactionFilterTest extends IntegrationTest {
         Customer c = InputModelFactory.initCustomer();
         Address a = InputModelFactory.initAddress();
         PaymentDetails p = InputModelFactory.initPaymentDetails();
-        CardDetails cd = InputModelFactory.initCardDetails("12", "24");
+        final String futureYear = LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("yy"));
+        CardDetails cd = InputModelFactory.initCardDetails("12", futureYear);
         c.setCardDetails(cd);
         c.setAddress(a);
         trans.setCustomer(c);

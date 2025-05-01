@@ -17,6 +17,9 @@ import com.eway.payment.rapid.sdk.beans.external.TransactionType;
 import com.eway.payment.rapid.sdk.integration.IntegrationTest;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class TransparentTransactionTest extends IntegrationTest {
 
     RapidClient client;
@@ -29,7 +32,8 @@ public class TransparentTransactionTest extends IntegrationTest {
         Customer c = InputModelFactory.initCustomer();
         Address a = InputModelFactory.initAddress();
         PaymentDetails p = InputModelFactory.initPaymentDetails();
-        CardDetails cd = InputModelFactory.initCardDetails("12", "24");
+        final String futureYear = LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("yy"));
+        CardDetails cd = InputModelFactory.initCardDetails("12", futureYear);
         c.setCardDetails(cd);
         c.setAddress(a);
         t.setCustomer(c);

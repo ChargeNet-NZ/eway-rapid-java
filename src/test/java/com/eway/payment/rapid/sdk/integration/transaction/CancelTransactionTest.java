@@ -12,6 +12,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class CancelTransactionTest extends IntegrationTest {
 
     RapidClient client;
@@ -25,7 +28,8 @@ public class CancelTransactionTest extends IntegrationTest {
         Customer c = InputModelFactory.initCustomer();
         Address a = InputModelFactory.initAddress();
         PaymentDetails p = InputModelFactory.initPaymentDetails();
-        CardDetails cd = InputModelFactory.initCardDetails("12", "24");
+        final String futureYear = LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("yy"));
+        CardDetails cd = InputModelFactory.initCardDetails("12", futureYear);
         c.setCardDetails(cd);
         c.setAddress(a);
         t.setCustomer(c);
