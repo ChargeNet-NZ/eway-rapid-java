@@ -63,10 +63,10 @@ public class RapidJdkClientTest {
         List<String> listError = client.getErrors();
         assertThat(client.isValid()).isFalse();
         assertThat(listError).hasSize(2);
-        for (String err : listError) {
-            assertThat(err).isEqualToIgnoringCase(Constant.LIBRARY_NOT_HAVE_ENDPOINT_ERROR_CODE);
-        }
-        assertThat(listError).contains(Constant.API_KEY_INVALID_ERROR_CODE);
+        assertThat(listError)
+                .containsExactlyInAnyOrder(
+                        Constant.LIBRARY_NOT_HAVE_ENDPOINT_ERROR_CODE,
+                        Constant.API_KEY_INVALID_ERROR_CODE);
     }
 
     @Test
