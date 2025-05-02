@@ -12,8 +12,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,11 +64,8 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
 
             U response = client.post()
                     .uri(builder -> {
-                        for (String path : getRequestPath()) {
-                            if (!StringUtils.isBlank(path)) {
-                                builder.path(path);
-                            }
-                        }
+                        final String path = String.join("/", getRequestPath());
+                        builder.path(path);
 
                         return builder.build();
                     })
@@ -115,11 +110,8 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
 
             U response = client.put()
                     .uri(builder -> {
-                        for (String path : getRequestPath()) {
-                            if (!StringUtils.isBlank(path)) {
-                                builder.path(path);
-                            }
-                        }
+                        final String path = String.join("/", getRequestPath());
+                        builder.path(path);
 
                         return builder.build();
                     })
@@ -165,13 +157,10 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
             return client
                     .get()
                     .uri(builder -> {
-                        for (String path : getRequestPath()) {
-                            if (!StringUtils.isBlank(path)) {
-                                builder.path(path);
-                            }
-                        }
+                        final String path = String.join("/", getRequestPath());
+                        builder.path(path);
 
-                        return builder.path(request).build();
+                        return builder.path("/" + request).build();
                     })
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
