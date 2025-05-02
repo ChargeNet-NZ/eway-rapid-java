@@ -22,7 +22,6 @@ runs:
         version: '1.29.2'
     - name: Run Tests
       shell: bash
-      working-directory: api
       run: mvn --fail-fast clean test
     - uses: mikepenz/action-junit-report@v3
       if: always()

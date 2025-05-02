@@ -37,7 +37,7 @@ jobs:
 
       - name: Notify Slack
         if: success() || failure()
-        uses: ChargeNet-NZ/pipelines/.github/actions/notify-slack@v5
+        uses: ./.github/actions/notify-slack
         with:
           webhook-url: ${{ secrets.SLACK_BUILD_HAPPENS_URL }}
           hash: ${{ needs.Setup.outputs.version }}

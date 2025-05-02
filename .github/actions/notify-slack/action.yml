@@ -1,0 +1,58 @@
+name: 'Notify Slack'
+description: 'Notify Slack'
+inputs:
+  webhook-url:
+    required: true
+    description: 'Slack Webhook URL'
+  hash:
+    required: true
+    description: 'Hash'
+  message:
+    required: false
+    default: ''
+    description: "What is being deployed"
+  env:
+    required: true
+    description: 'Environment'
+  start:
+    required: false
+    default: 'false'
+    description: 'true if this is the start of the pipeline'
+  deploy-url:
+    required: false
+    default: ''
+    description: 'URL to the deployment'
+runs:
+  using: "composite"
+  steps:
+    - name: Notify Slack Finished
+      uses: slackapi/slack-github-action@v1.18.0
+      with:
+        payload: |
+          { "attachments": [
+              {
+                "color": "${{ (inputs.start == 'true' && '#0077B6') || (job.status == 'success' && 'good' || 'danger') }}",
+                "text": "*${{ github.job }}*: ${{ inputs.start == 'true' && 'starting' || job.status }}, *Hash*: ${{ inputs.hash }}",
+                "fields": [
+                  {
+                    "short": true,
+                    "value": "*Env*: ${{ inputs.env || 'N/A' }}"
+                  },
+                  {
+                    "short": false,
+                    "value": "${{ format('*Branch*: {0}', github.event.pull_request.head.ref || github.ref_name) }}"
+                  },
+                  {
+                    "short": false,
+                    "value": "${{ inputs.message != '' && format('*Change*: {0}', inputs.message) || inputs.message }}"
+                  },
+                  {
+                    "short": false,
+                    "value": "${{ inputs.deploy-url != '' && format('*Sanity Check*: <{0}>', inputs.deploy-url) || '' }}"
+                  }
+                ]
+              }
+          ]}
+      env:
+        SLACK_WEBHOOK_URL: ${{ inputs.webhook-url }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
