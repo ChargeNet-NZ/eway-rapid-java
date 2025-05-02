@@ -2,23 +2,31 @@ package com.eway.payment.rapid.sdk.integration.transaction;
 
 import com.eway.payment.rapid.sdk.InputModelFactory;
 import com.eway.payment.rapid.sdk.RapidClient;
-import com.eway.payment.rapid.sdk.beans.external.*;
+import com.eway.payment.rapid.sdk.beans.external.Address;
+import com.eway.payment.rapid.sdk.beans.external.CardDetails;
+import com.eway.payment.rapid.sdk.beans.external.Customer;
+import com.eway.payment.rapid.sdk.beans.external.FraudAction;
+import com.eway.payment.rapid.sdk.beans.external.PaymentDetails;
+import com.eway.payment.rapid.sdk.beans.external.PaymentMethod;
+import com.eway.payment.rapid.sdk.beans.external.ShippingDetails;
+import com.eway.payment.rapid.sdk.beans.external.Transaction;
+import com.eway.payment.rapid.sdk.beans.external.TransactionType;
 import com.eway.payment.rapid.sdk.integration.IntegrationTest;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DirectTransactionTest extends IntegrationTest {
 
     RapidClient client;
     Transaction t;
 
-    @Before
+    @BeforeEach
     public void setup() {
         client = getSandboxClient();
         t = InputModelFactory.createTransaction();
@@ -38,8 +46,8 @@ public class DirectTransactionTest extends IntegrationTest {
     @Test
     public void testValidInput() {
         CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
-        Assert.assertTrue(res.getTransactionStatus().isStatus());
-        Assert.assertNotEquals(0, res.getTransactionStatus().getTransactionID());
+        assertThat(res.getTransactionStatus().isStatus()).isTrue();
+        assertThat(res.getTransactionStatus().getTransactionID()).isNotEqualTo(0);
     }
 
     @Test
@@ -59,9 +67,9 @@ public class DirectTransactionTest extends IntegrationTest {
 
         CreateTransactionResponse res = client.create(PaymentMethod.Direct, transaction);
 
-        Assert.assertTrue(res.getTransactionStatus().isStatus());
-        Assert.assertNotEquals(0, res.getTransactionStatus().getTransactionID());
-        Assert.assertEquals(res.getTransactionStatus().getFraudAction().name(), FraudAction.NotChallenged.name());
+        assertThat(res.getTransactionStatus().isStatus()).isTrue();
+        assertThat(res.getTransactionStatus().getTransactionID()).isNotEqualTo(0);
+        assertThat(FraudAction.NotChallenged.name()).isEqualTo(res.getTransactionStatus().getFraudAction().name());
     }
 
     @Test
@@ -74,28 +82,24 @@ public class DirectTransactionTest extends IntegrationTest {
         tran.setTransactionType(TransactionType.Purchase);
         CreateTransactionResponse res = client.create(PaymentMethod.Direct, tran);
 
-        Assert.assertTrue(!res.getTransactionStatus().isStatus());
-        Assert.assertEquals(0, res.getTransactionStatus().getTransactionID());
-        Assert.assertTrue(res.getErrors().contains("V6021"));
+        assertThat(res.getTransactionStatus().isStatus()).isFalse();
+        assertThat(res.getTransactionStatus().getTransactionID()).isEqualTo(0);
+        assertThat(res.getErrors())
+                .contains("V6021")
 //        Assert.assertTrue(res.getErrors().contains("V6022")); //problem with Rapid not returning the correct errors
-        Assert.assertTrue(res.getErrors().contains("V6101"));
-        Assert.assertTrue(res.getErrors().contains("V6102"));
-        Assert.assertTrue(res.getErrors().contains("V6023"));
-        Assert.assertEquals(res.getTransactionStatus().getFraudAction().name(), FraudAction.NotChallenged.name());
+                .contains("V6101")
+                .contains("V6102")
+                .contains("V6023");
+        assertThat(FraudAction.NotChallenged.name()).isEqualTo(res.getTransactionStatus().getFraudAction().name());
     }
 
     @Test
     public void testInvalidInput() {
         t.getCustomer().getCardDetails().setExpiryMonth("13");
         CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
-        Assert.assertTrue(!res.getTransactionStatus().isStatus());
-        Assert.assertEquals(0, res.getTransactionStatus().getTransactionID());
-        Assert.assertTrue(res.getErrors().contains("V6101"));
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(res.getTransactionStatus().isStatus()).isFalse();
+        assertThat(res.getTransactionStatus().getTransactionID()).isEqualTo(0);
+        assertThat(res.getErrors()).contains("V6101");
     }
 
 }

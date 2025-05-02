@@ -1,30 +1,21 @@
 package com.eway.payment.rapid.sdk.message.convert;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.InputModelFactory;
 import com.eway.payment.rapid.sdk.beans.external.Address;
 import com.eway.payment.rapid.sdk.beans.external.CardDetails;
 import com.eway.payment.rapid.sdk.beans.external.Customer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomerToInternalConverterTest {
 
     private CustomerToInternalCustomerConverter convert;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new CustomerToInternalCustomerConverter();
-    }
-
-    @After
-    public void tearDown() {
-
     }
 
     @Test
@@ -33,11 +24,11 @@ public class CustomerToInternalConverterTest {
         cust.setCardDetails(InputModelFactory.initCardDetails("12", "25"));
         com.eway.payment.rapid.sdk.beans.internal.Customer interCust = convert.doConvert(cust);
         CardDetails detail = interCust.getCardDetails();
-        assertNotNull(detail);
-        assertNotNull(detail.getExpiryMonth());
-        assertNotNull(detail.getExpiryYear());
-        assertEquals("12", detail.getExpiryMonth());
-        assertEquals("25", detail.getExpiryYear());
+        assertThat(detail).isNotNull();
+        assertThat(detail.getExpiryMonth()).isNotNull();
+        assertThat(detail.getExpiryYear()).isNotNull();
+        assertThat(detail.getExpiryMonth()).isEqualTo("12");
+        assertThat(detail.getExpiryYear()).isEqualTo("25");
     }
 
     @Test
@@ -50,24 +41,24 @@ public class CustomerToInternalConverterTest {
         Address add = InputModelFactory.createAddress(city, country, postalCode, state);
         cust.setAddress(add);
         com.eway.payment.rapid.sdk.beans.internal.Customer interCust = convert.doConvert(cust);
-        assertNotNull(interCust.getState());
-        assertEquals(city, interCust.getCity());
-        assertNotNull(interCust.getCountry());
-        assertEquals(city, interCust.getCity());
-        assertNotNull(interCust.getCity());
-        assertEquals(city, interCust.getCity());
-        assertNotNull(interCust.getPostalCode());
-        assertEquals(postalCode, interCust.getPostalCode());
+        assertThat(interCust.getState()).isNotNull();
+        assertThat(interCust.getState()).isEqualTo(state);
+        assertThat(interCust.getCountry()).isNotNull();
+        assertThat(interCust.getCountry()).isEqualTo(country);
+        assertThat(interCust.getCity()).isNotNull();
+        assertThat(interCust.getCity()).isEqualTo(city);
+        assertThat(interCust.getPostalCode()).isNotNull();
+        assertThat(interCust.getPostalCode()).isEqualTo(postalCode);
     }
 
     @Test
     public void testConvertCustomerWithoutAddress() throws Exception {
         Customer cust = InputModelFactory.initCustomer();
         com.eway.payment.rapid.sdk.beans.internal.Customer interCust = convert.doConvert(cust);
-        assertNull(interCust.getState());
-        assertNull(interCust.getCity());
-        assertNull(interCust.getCountry());
-        assertNull(interCust.getPostalCode());
+        assertThat(interCust.getState()).isNull();
+        assertThat(interCust.getCity()).isNull();
+        assertThat(interCust.getCountry()).isNull();
+        assertThat(interCust.getPostalCode()).isNull();
     }
 
 }

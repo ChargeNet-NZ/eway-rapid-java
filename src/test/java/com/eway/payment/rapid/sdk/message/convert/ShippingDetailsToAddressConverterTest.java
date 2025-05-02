@@ -1,21 +1,20 @@
 package com.eway.payment.rapid.sdk.message.convert;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.beans.external.ShippingDetails;
 import com.eway.payment.rapid.sdk.beans.external.ShippingMethod;
 import com.eway.payment.rapid.sdk.beans.internal.ShippingAddress;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.object.create.ObjectCreator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ShippingDetailsToAddressConverterTest {
 
     private BeanConverter<ShippingDetails, ShippingAddress> convert;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new ShippingDetailsToAddressConverter();
     }
@@ -24,16 +23,16 @@ public class ShippingDetailsToAddressConverterTest {
     public void testDoConvert() throws RapidSdkException {
         ShippingDetails detail = ObjectCreator.createShippingDetails();
         ShippingAddress address = convert.doConvert(detail);
-        Assert.assertEquals("John", address.getFirstName());
-        Assert.assertEquals("Sydney", address.getCity());
-        Assert.assertEquals(ShippingMethod.NextDay.name(), address.getShippingMethod());
+        assertThat(address.getFirstName()).isEqualTo("John");
+        assertThat(address.getCity()).isEqualTo("Sydney");
+        assertThat(address.getShippingMethod()).isEqualTo(ShippingMethod.NextDay.name());
     }
 
     @Test
     public void testNullShippingDetail() throws RapidSdkException {
         ShippingDetails detail = null;
         ShippingAddress address = convert.doConvert(detail);
-        Assert.assertNull(address.getFirstName());
+        assertThat(address.getFirstName()).isNull();
     }
 
     @Test
@@ -42,11 +41,6 @@ public class ShippingDetailsToAddressConverterTest {
         detail.setShippingAddress(null);
         detail.setShippingMethod(null);
         ShippingAddress address = convert.doConvert(detail);
-        Assert.assertNull(address.getCity());
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(address.getCity()).isNull();
     }
 }

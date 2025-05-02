@@ -1,16 +1,15 @@
 package com.eway.payment.rapid.sdk.message.convert.response;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.entities.CreateAccessCodeSharedResponse;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.message.convert.BeanConverter;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AccessCodeSharedToCreateTransConverterTest {
 
@@ -18,7 +17,7 @@ public class AccessCodeSharedToCreateTransConverterTest {
     CreateAccessCodeSharedResponse response;
     CreateAccessCodeSharedResponse errorResponse;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         convert = new AccessCodeSharedToCreateTransConverter();
         String escapedJson = "{\"SharedPaymentUrl\":\"https://secure-au.sandbox.ewaypayments.com/sharedpage/sharedpayment?AccessCode=F9802QqDnIqsLNfb1_rjKo2LA8P-RAalL-7TkBkYaDLRLuh-KDFqKVuvD0hhCmaWvqNhTnf07s2Kqhkru_nyySX-ZAjqRz6675u4tlZlFi1huKGXA2aFcS_l4BXlvmralGqtj\",\"AccessCode\":\"F9802QqDnIqsLNfb1_rjKo2LA8P-RAalL-7TkBkYaDLRLuh-KDFqKVuvD0hhCmaWvqNhTnf07s2Kqhkru_nyySX-ZAjqRz6675u4tlZlFi1huKGXA2aFcS_l4BXlvmralGqtj\",\"Customer\":{\"CardNumber\":\"\",\"CardStartMonth\":\"\",\"CardStartYear\":\"\",\"CardIssueNumber\":\"\",\"CardName\":\"\",\"CardExpiryMonth\":\"\",\"CardExpiryYear\":\"\",\"IsActive\":false,\"TokenCustomerID\":null,\"Reference\":\"\",\"Title\":\"Mr.\",\"FirstName\":\"John\",\"LastName\":\"Smith\",\"CompanyName\":\"Example\",\"JobDescription\":\"Java Developer\",\"Street1\":\"Level 5\",\"Street2\":\"369 Queen Street\",\"City\":\"Sydney\",\"State\":\"NSW\",\"PostalCode\":\"2000\",\"Country\":\"au\",\"Email\":\"\",\"Phone\":\"0123456789\",\"Mobile\":\"0123456789\",\"Comments\":\"\",\"Fax\":\"1234\",\"Url\":\"http://www.ewaypayments.com\"},\"Payment\":{\"TotalAmount\":1000,\"InvoiceNumber\":\"Inv 21540\",\"InvoiceDescription\":\"Individual Invoice Description\",\"InvoiceReference\":\"513456\",\"CurrencyCode\":\"AUD\"},\"FormActionURL\":\"https://secure-au.sandbox.ewaypayments.com/Process\",\"CompleteCheckoutURL\":null,\"Errors\":null}";
@@ -35,18 +34,13 @@ public class AccessCodeSharedToCreateTransConverterTest {
     @Test
     public void testDoConvert() throws RapidSdkException {
         CreateTransactionResponse transRes = convert.doConvert(response);
-        Assert.assertEquals(1000d, transRes.getTransaction().getPaymentDetails().getTotalAmount(), 0.001);
-        Assert.assertEquals("John", transRes.getTransaction().getCustomer().getFirstName());
+        assertThat(transRes.getTransaction().getPaymentDetails().getTotalAmount()).isEqualTo(1000);
+        assertThat(transRes.getTransaction().getCustomer().getFirstName()).isEqualTo("John");
     }
 
     @Test
     public void testError() throws RapidSdkException {
         CreateTransactionResponse transRes = convert.doConvert(errorResponse);
-        Assert.assertEquals("V6047", transRes.getErrors().get(0));
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(transRes.getErrors().get(0)).isEqualTo("V6047");
     }
 }

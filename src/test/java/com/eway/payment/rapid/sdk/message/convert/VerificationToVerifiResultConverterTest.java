@@ -1,21 +1,20 @@
 package com.eway.payment.rapid.sdk.message.convert;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.beans.external.VerificationResult;
 import com.eway.payment.rapid.sdk.beans.external.VerifyStatus;
 import com.eway.payment.rapid.sdk.beans.internal.Verification;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.object.create.ObjectCreator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class VerificationToVerifiResultConverterTest {
 
     private BeanConverter<Verification, VerificationResult> convert;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new VerificationToVerifiResultConverter();
     }
@@ -24,7 +23,7 @@ public class VerificationToVerifiResultConverterTest {
     public void testDoConvert() throws RapidSdkException {
         Verification v = ObjectCreator.createVerification();
         VerificationResult vr = convert.doConvert(v);
-        Assert.assertEquals(VerifyStatus.Unchecked, vr.getCVN());
+        assertThat(vr.getCVN()).isEqualTo(VerifyStatus.Unchecked);
     }
 
     @Test
@@ -32,11 +31,6 @@ public class VerificationToVerifiResultConverterTest {
         Verification v = ObjectCreator.createVerification();
         v.setAddress("a");
         VerificationResult result = convert.doConvert(v);
-        Assert.assertEquals(result.getAddress(), null);
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(result.getAddress()).isNull();
     }
 }

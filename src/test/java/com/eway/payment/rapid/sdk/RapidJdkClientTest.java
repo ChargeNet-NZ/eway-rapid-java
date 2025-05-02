@@ -1,32 +1,18 @@
 package com.eway.payment.rapid.sdk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.eway.payment.rapid.sdk.util.Constant;
+import com.eway.payment.rapid.sdk.util.ResourceUtil;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Properties;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.eway.payment.rapid.sdk.util.Constant;
-import com.eway.payment.rapid.sdk.util.ResourceUtil;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RapidJdkClientTest {
 
     private RapidClient client;
-
-    @Before
-    public void setup() {
-
-    }
-
-    @After
-    public void tearDown() {
-
-    }
 
     @Test
     public void testValidRapidClientInputParam() {
@@ -35,8 +21,8 @@ public class RapidJdkClientTest {
         String endpoint = "https://api.sandbox.ewaypayments.com";
         client = RapidSDK.newRapidClient(APIKey, passWord, endpoint);
         List<String> listError = client.getErrors();
-        assertTrue(client.isValid());
-        assertTrue(listError.size() == 0);
+        assertThat(client.isValid()).isTrue();
+        assertThat(listError).isEmpty();
     }
 
     @Test
@@ -46,11 +32,10 @@ public class RapidJdkClientTest {
         String endpoint = "";
         client = RapidSDK.newRapidClient(APIKey, passWord, endpoint);
         List<String> listError = client.getErrors();
-        assertTrue(!client.isValid());
-        assertTrue(listError.size() == 1);
+        assertThat(client.isValid()).isFalse();
+        assertThat(listError).hasSize(1);
         for (String err : listError) {
-            assertTrue(err
-                    .equalsIgnoreCase(Constant.LIBRARY_NOT_HAVE_ENDPOINT_ERROR_CODE));
+            assertThat(err).isEqualToIgnoringCase(Constant.LIBRARY_NOT_HAVE_ENDPOINT_ERROR_CODE);
         }
 
     }
@@ -62,26 +47,26 @@ public class RapidJdkClientTest {
         String endpoint = "htttp://";
         client = RapidSDK.newRapidClient(APIKey, passWord, endpoint);
         List<String> listError = client.getErrors();
-        assertTrue(!client.isValid());
-        assertEquals(client.getErrors().size(), 1);
+        assertThat(client.isValid()).isFalse();
+        assertThat(listError).hasSize(1);
         for (String err : listError) {
-            assertTrue(err
-                    .equalsIgnoreCase(Constant.API_KEY_INVALID_ERROR_CODE));
+            assertThat(err).isEqualToIgnoringCase(Constant.API_KEY_INVALID_ERROR_CODE);
         }
     }
 
     @Test
-    public void testMissingApiKeyAndRapidEnpoint() {
+    public void testMissingApiKeyAndRapidEndpoint() {
         String APIKey = "skjskj";
         String passWord = "";
         String endpoint = "";
         client = RapidSDK.newRapidClient(APIKey, passWord, endpoint);
         List<String> listError = client.getErrors();
-        assertTrue(!client.isValid());
-        assertEquals(client.getErrors().size(), 2);
-        assertTrue(listError
-                .contains(Constant.LIBRARY_NOT_HAVE_ENDPOINT_ERROR_CODE));
-        assertTrue(listError.contains(Constant.API_KEY_INVALID_ERROR_CODE));
+        assertThat(client.isValid()).isFalse();
+        assertThat(listError).hasSize(2);
+        for (String err : listError) {
+            assertThat(err).isEqualToIgnoringCase(Constant.LIBRARY_NOT_HAVE_ENDPOINT_ERROR_CODE);
+        }
+        assertThat(listError).contains(Constant.API_KEY_INVALID_ERROR_CODE);
     }
 
     @Test
@@ -90,14 +75,16 @@ public class RapidJdkClientTest {
         String passWord = "uncover";
         String endpoint = "https://api.sandbox.ewaypayments.com";
         client = RapidSDK.newRapidClient(APIKey, passWord, endpoint);
-        assertTrue(client.isValid());
+        assertThat(client.isValid()).isTrue();
         String newAPIKey = "";
         String newPass = "uncover";
         client.setCredentials(newAPIKey, newPass);
-        assertTrue(!client.isValid());
-        assertEquals(client.getErrors().size(), 1);
-        assertTrue(client.getErrors().contains(
-                Constant.API_KEY_INVALID_ERROR_CODE));
+        List<String> listError = client.getErrors();
+        assertThat(client.isValid()).isFalse();
+        assertThat(listError).hasSize(1);
+        for (String err : listError) {
+            assertThat(err).isEqualToIgnoringCase(Constant.API_KEY_INVALID_ERROR_CODE);
+        }
     }
 
     @Test
@@ -106,17 +93,17 @@ public class RapidJdkClientTest {
         String passWord = "";
         String endpoint = "https://api.sandbox.ewaypayments.com";
         client = RapidSDK.newRapidClient(APIKey, passWord, endpoint);
-        assertTrue(!client.isValid());
-        assertEquals(client.getErrors().size(), 1);
+        assertThat(client.isValid()).isFalse();
+        assertThat(client.getErrors()).hasSize(1);
         String newAPIKey = "newAPIKey";
         String newPass = "uncover";
         client.setCredentials(newAPIKey, newPass);
-        assertTrue(client.isValid());
-        assertEquals(client.getErrors().size(), 0);
+        assertThat(client.isValid()).isTrue();
+        assertThat(client.getErrors()).isEmpty();
     }
 
     @Test
-    public void testInitClientWithRapidEnpoinIsSandboxOrProduction()
+    public void testInitClientWithRapidEndpointIsSandboxOrProduction()
             throws Exception {
         String APIKey = "skjskj";
         String passWord = "jjhhjk";
@@ -128,24 +115,21 @@ public class RapidJdkClientTest {
         Field field = c.getDeclaredField("webUrl");
         field.setAccessible(true);
         String value = (String) field.get(client);
-        assertTrue(value.equalsIgnoreCase(prop
-                .getProperty(Constant.GLOBAL_RAPID_SANDBOX_REST_URL_PARAM)));
+        assertThat(value).isEqualToIgnoringCase(prop
+                .getProperty(Constant.GLOBAL_RAPID_SANDBOX_REST_URL_PARAM));
         // Load properties file
     }
 
     @Test
-    public void testFindErrorCode() throws Exception {
+    public void testFindErrorCode() {
         String errCode = "S9991";
-        assertEquals(
-                "Library does not have an API key or password initialised, or are invalid",
-                RapidSDK.userDisplayMessage(errCode, "en"));
+        assertThat(RapidSDK.userDisplayMessage(errCode, "en"))
+                .isEqualTo("Library does not have an API key or password initialised, or are invalid");
     }
 
     @Test
     public void testNullErrorCode() {
         String errCode = null;
-        assertEquals(
-                null,
-                RapidSDK.userDisplayMessage(errCode, "en"));
+        assertThat(RapidSDK.userDisplayMessage(errCode, "en")).isNull();
     }
 }

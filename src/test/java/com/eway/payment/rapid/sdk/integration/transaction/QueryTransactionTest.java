@@ -2,24 +2,30 @@ package com.eway.payment.rapid.sdk.integration.transaction;
 
 import com.eway.payment.rapid.sdk.InputModelFactory;
 import com.eway.payment.rapid.sdk.RapidClient;
-import com.eway.payment.rapid.sdk.beans.external.*;
+import com.eway.payment.rapid.sdk.beans.external.Address;
+import com.eway.payment.rapid.sdk.beans.external.CardDetails;
+import com.eway.payment.rapid.sdk.beans.external.Customer;
+import com.eway.payment.rapid.sdk.beans.external.FraudAction;
+import com.eway.payment.rapid.sdk.beans.external.PaymentDetails;
+import com.eway.payment.rapid.sdk.beans.external.PaymentMethod;
+import com.eway.payment.rapid.sdk.beans.external.Transaction;
 import com.eway.payment.rapid.sdk.integration.IntegrationTest;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
 import com.eway.payment.rapid.sdk.output.QueryTransactionResponse;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class QueryTransactionTest extends IntegrationTest {
 
     RapidClient client;
     Transaction trans;
 
-    @Before
+    @BeforeEach
     public void setup() {
         client = getSandboxClient();
 
@@ -40,38 +46,31 @@ public class QueryTransactionTest extends IntegrationTest {
 
         CreateTransactionResponse transResponse = client.create(
                 PaymentMethod.Direct, trans);
-        Assert.assertTrue(transResponse.getTransactionStatus().isStatus());
-        Assert.assertNotEquals(0, transResponse.getTransactionStatus()
-                .getTransactionID());
+        assertThat(transResponse.getTransactionStatus().isStatus()).isTrue();
+        assertThat(transResponse.getTransactionStatus().getTransactionID()).isNotEqualTo(0);
 
         int transactionId = transResponse.getTransactionStatus()
                 .getTransactionID();
         QueryTransactionResponse query = client.queryTransaction(transactionId);
-        Assert.assertEquals(transactionId, query.getTransactionStatus()
-                .getTransactionID());
-        Assert.assertTrue(!query.getTransaction().getOptions().isEmpty());
-        Assert.assertTrue(query.getErrors() == null || query.getErrors().isEmpty());
-        Assert.assertEquals(query.getTransactionStatus().getFraudAction().name(), FraudAction.NotChallenged.name());
+        assertThat(query.getTransactionStatus().getTransactionID()).isEqualTo(transactionId);
+        assertThat(query.getTransaction().getOptions()).isNotEmpty();
+        assertThat(query.getErrors() == null || query.getErrors().isEmpty()).isTrue();
+        assertThat(query.getTransactionStatus().getFraudAction().name()).isEqualTo(FraudAction.NotChallenged.name());
 
     }
 
     @Test
     public void testBlankInput() {
         QueryTransactionResponse res = client.queryTransaction("");
-        Assert.assertTrue(res.getTransactionStatus().getTransactionID() == 0 || res.getTransaction() == null);
-        Assert.assertEquals(res.getTransactionStatus().getFraudAction().name(), FraudAction.NotChallenged.name());
+        assertThat(res.getTransactionStatus().getTransactionID() == 0 || res.getTransaction() == null).isTrue();
+        assertThat(res.getTransactionStatus().getFraudAction().name()).isEqualTo(FraudAction.NotChallenged.name());
     }
 
     @Test
     public void testInvalidInput() {
         QueryTransactionResponse res = client
                 .queryTransaction(InputModelFactory.randomString(50));
-        Assert.assertNull(res.getTransaction());
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(res.getTransaction()).isNull();
     }
 
 }

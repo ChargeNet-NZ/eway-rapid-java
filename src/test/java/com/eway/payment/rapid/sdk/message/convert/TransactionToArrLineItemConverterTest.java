@@ -1,20 +1,19 @@
 package com.eway.payment.rapid.sdk.message.convert;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.beans.external.LineItem;
 import com.eway.payment.rapid.sdk.beans.external.Transaction;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.object.create.ObjectCreator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TransactionToArrLineItemConverterTest {
 
     private BeanConverter<Transaction, LineItem[]> convert;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new TransactionToArrLineItemConverter();
     }
@@ -24,18 +23,13 @@ public class TransactionToArrLineItemConverterTest {
         Transaction t = ObjectCreator.createTransaction();
         t.setLineItems(ObjectCreator.createLineItems());
         LineItem[] itemArr = convert.doConvert(t);
-        Assert.assertEquals(1, itemArr.length);
+        assertThat(itemArr).hasSize(1);
     }
 
     @Test
     public void testNullItem() throws RapidSdkException {
         Transaction t = ObjectCreator.createTransaction();
         LineItem[] itemArr = convert.doConvert(t);
-        Assert.assertTrue(itemArr.length == 0);
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(itemArr).isEmpty();
     }
 }

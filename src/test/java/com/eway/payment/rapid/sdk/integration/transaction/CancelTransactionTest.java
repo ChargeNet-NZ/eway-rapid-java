@@ -2,18 +2,24 @@ package com.eway.payment.rapid.sdk.integration.transaction;
 
 import com.eway.payment.rapid.sdk.InputModelFactory;
 import com.eway.payment.rapid.sdk.RapidClient;
-import com.eway.payment.rapid.sdk.beans.external.*;
+import com.eway.payment.rapid.sdk.beans.external.Address;
+import com.eway.payment.rapid.sdk.beans.external.CardDetails;
+import com.eway.payment.rapid.sdk.beans.external.Customer;
+import com.eway.payment.rapid.sdk.beans.external.PaymentDetails;
+import com.eway.payment.rapid.sdk.beans.external.PaymentMethod;
+import com.eway.payment.rapid.sdk.beans.external.Refund;
+import com.eway.payment.rapid.sdk.beans.external.Transaction;
 import com.eway.payment.rapid.sdk.beans.internal.RefundDetails;
 import com.eway.payment.rapid.sdk.integration.IntegrationTest;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
 import com.eway.payment.rapid.sdk.output.RefundResponse;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CancelTransactionTest extends IntegrationTest {
 
@@ -21,7 +27,7 @@ public class CancelTransactionTest extends IntegrationTest {
     Transaction t;
     Refund refund;
 
-    @Before
+    @BeforeEach
     public void setup() {
         client = getSandboxClient();
         t = InputModelFactory.createTransaction();
@@ -47,7 +53,7 @@ public class CancelTransactionTest extends IntegrationTest {
         rd.setOriginalTransactionID(String.valueOf(res.getTransactionStatus().getTransactionID()));
         refund.setRefundDetails(rd);
         RefundResponse cancelRes = client.cancel(refund);
-        Assert.assertTrue(cancelRes.getTransactionStatus().isStatus());
+        assertThat(cancelRes.getTransactionStatus().isStatus()).isTrue();
     }
 
     @Test
@@ -56,7 +62,7 @@ public class CancelTransactionTest extends IntegrationTest {
         rd.setOriginalTransactionID("20400723");
         refund.setRefundDetails(rd);
         RefundResponse cancelRes = client.cancel(refund);
-        Assert.assertTrue(cancelRes.getErrors().contains("V6134"));
+        assertThat(cancelRes.getErrors()).contains("V6134");
     }
 
     @Test
@@ -68,12 +74,7 @@ public class CancelTransactionTest extends IntegrationTest {
         rd.setOriginalTransactionID(String.valueOf(res.getTransactionStatus().getTransactionID()));
         refund.setRefundDetails(rd);
         RefundResponse cancelRes = client.cancel(refund);
-        Assert.assertTrue(!cancelRes.getTransactionStatus().isStatus());
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(cancelRes.getTransactionStatus().isStatus()).isFalse();
     }
 
 }
