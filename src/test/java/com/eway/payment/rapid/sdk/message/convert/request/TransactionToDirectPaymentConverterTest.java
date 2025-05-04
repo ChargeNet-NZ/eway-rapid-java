@@ -1,10 +1,5 @@
 package com.eway.payment.rapid.sdk.message.convert.request;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.beans.external.Address;
 import com.eway.payment.rapid.sdk.beans.external.CardDetails;
 import com.eway.payment.rapid.sdk.beans.external.Customer;
@@ -15,13 +10,17 @@ import com.eway.payment.rapid.sdk.entities.DirectPaymentRequest;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.message.convert.BeanConverter;
 import com.eway.payment.rapid.sdk.object.create.ObjectCreator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TransactionToDirectPaymentConverterTest {
 
     private BeanConverter<Transaction, DirectPaymentRequest> convert;
     Transaction input;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new TransactionToDirectPaymentConverter();
         Customer customer = ObjectCreator.createExternalCustomer();
@@ -40,16 +39,11 @@ public class TransactionToDirectPaymentConverterTest {
     @Test
     public void testDoConvert() throws RapidSdkException {
         DirectPaymentRequest request = convert.doConvert(input);
-        Assert.assertEquals(1000d, request.getPayment().getTotalAmount(), 0.001);
-        Assert.assertEquals("John", request.getCustomer().getFirstName());
-        Assert.assertEquals("Level 5", request.getCustomer().getStreet1());
-        Assert.assertEquals("12", request.getCustomer().getCardDetails().getExpiryMonth());
-        Assert.assertEquals(TransactionType.Purchase.name(), request.getTransactionType());
-
-    }
-
-    @After
-    public void tearDown() {
+        assertThat(request.getPayment().getTotalAmount()).isEqualTo(1000);
+        assertThat(request.getCustomer().getFirstName()).isEqualTo("John");
+        assertThat(request.getCustomer().getStreet1()).isEqualTo("Level 5");
+        assertThat(request.getCustomer().getCardDetails().getExpiryMonth()).isEqualTo("12");
+        assertThat(request.getTransactionType()).isEqualTo(TransactionType.Purchase.name());
 
     }
 }

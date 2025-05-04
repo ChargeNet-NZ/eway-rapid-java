@@ -1,25 +1,30 @@
 package com.eway.payment.rapid.sdk.message.convert.request;
 
-import com.eway.payment.rapid.sdk.beans.external.*;
+import com.eway.payment.rapid.sdk.beans.external.Address;
+import com.eway.payment.rapid.sdk.beans.external.CardDetails;
+import com.eway.payment.rapid.sdk.beans.external.Customer;
+import com.eway.payment.rapid.sdk.beans.external.LineItem;
+import com.eway.payment.rapid.sdk.beans.external.Refund;
+import com.eway.payment.rapid.sdk.beans.external.ShippingDetails;
 import com.eway.payment.rapid.sdk.beans.internal.Option;
 import com.eway.payment.rapid.sdk.beans.internal.RefundDetails;
 import com.eway.payment.rapid.sdk.entities.DirectRefundRequest;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.message.convert.BeanConverter;
 import com.eway.payment.rapid.sdk.object.create.ObjectCreator;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RefundToDirectRefundReqConverterTest {
 
     private BeanConverter<Refund, DirectRefundRequest> convert;
     Refund refund;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new RefundToDirectRefundReqConverter();
         refund = new Refund();
@@ -45,14 +50,9 @@ public class RefundToDirectRefundReqConverterTest {
     @Test
     public void testDoConvert() throws RapidSdkException {
         DirectRefundRequest request = convert.doConvert(refund);
-        Assert.assertEquals("John", request.getCustomer().getFirstName());
-        Assert.assertEquals("Sydney", request.getShippingAddress().getCity());
-        Assert.assertEquals(1, request.getItems().length);
-        Assert.assertEquals(2, request.getOptions().length);
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(request.getCustomer().getFirstName()).isEqualTo("John");
+        assertThat(request.getShippingAddress().getCity()).isEqualTo("Sydney");
+        assertThat(request.getItems()).hasSize(1);
+        assertThat(request.getOptions()).hasSize(2);
     }
 }

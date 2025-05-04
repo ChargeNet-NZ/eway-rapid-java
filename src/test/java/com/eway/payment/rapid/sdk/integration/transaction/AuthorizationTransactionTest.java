@@ -2,23 +2,28 @@ package com.eway.payment.rapid.sdk.integration.transaction;
 
 import com.eway.payment.rapid.sdk.InputModelFactory;
 import com.eway.payment.rapid.sdk.RapidClient;
-import com.eway.payment.rapid.sdk.beans.external.*;
+import com.eway.payment.rapid.sdk.beans.external.Address;
+import com.eway.payment.rapid.sdk.beans.external.CardDetails;
+import com.eway.payment.rapid.sdk.beans.external.Customer;
+import com.eway.payment.rapid.sdk.beans.external.PaymentDetails;
+import com.eway.payment.rapid.sdk.beans.external.PaymentMethod;
+import com.eway.payment.rapid.sdk.beans.external.Transaction;
 import com.eway.payment.rapid.sdk.integration.IntegrationTest;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthorizationTransactionTest extends IntegrationTest {
 
     RapidClient client;
     Transaction t;
 
-    @Before
+    @BeforeEach
     public void setup() {
         client = getSandboxClient();
         t = InputModelFactory.createTransaction();
@@ -39,15 +44,15 @@ public class AuthorizationTransactionTest extends IntegrationTest {
         CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
         t.setAuthTransactionID(res.getTransactionStatus().getTransactionID());
         CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t);
-        Assert.assertTrue(res.getTransactionStatus().isStatus());
-        Assert.assertNotEquals(0, authRes.getTransactionStatus().getTransactionID());
+        assertThat(res.getTransactionStatus().isStatus()).isTrue();
+        assertThat(authRes.getTransactionStatus().getTransactionID()).isNotEqualTo(0);
     }
 
     @Test
     public void testInvalidInput1() {
         t.setAuthTransactionID(1234);
         CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t);
-        Assert.assertTrue(authRes.getErrors().get(0).contains("V6134"));
+        assertThat(authRes.getErrors().get(0)).contains("V6134");
     }
 
     @Test
@@ -56,12 +61,7 @@ public class AuthorizationTransactionTest extends IntegrationTest {
         t.setAuthTransactionID(res.getTransactionStatus().getTransactionID());
         CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t);
         CreateTransactionResponse authRes2 = client.create(PaymentMethod.Authorisation, t);
-        Assert.assertTrue(!authRes2.getTransactionStatus().isStatus());
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(authRes2.getTransactionStatus().isStatus()).isFalse();
     }
 
 }

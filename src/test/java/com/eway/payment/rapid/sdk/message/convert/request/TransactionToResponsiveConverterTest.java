@@ -1,10 +1,5 @@
 package com.eway.payment.rapid.sdk.message.convert.request;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.beans.external.Address;
 import com.eway.payment.rapid.sdk.beans.external.Customer;
 import com.eway.payment.rapid.sdk.beans.external.PaymentDetails;
@@ -15,13 +10,17 @@ import com.eway.payment.rapid.sdk.entities.CreateAccessCodeSharedRequest;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.message.convert.BeanConverter;
 import com.eway.payment.rapid.sdk.object.create.ObjectCreator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TransactionToResponsiveConverterTest {
 
     private BeanConverter<Transaction, CreateAccessCodeSharedRequest> convert;
     Transaction input;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new TransactionToCreateAccessCodeSharedRequestConverter();
         Customer customer = ObjectCreator.createExternalCustomer();
@@ -40,10 +39,10 @@ public class TransactionToResponsiveConverterTest {
     @Test
     public void testDoConvert() throws RapidSdkException {
         CreateAccessCodeSharedRequest request = convert.doConvert(input);
-        Assert.assertEquals(1000d, request.getPayment().getTotalAmount(), 0.001);
-        Assert.assertEquals("John", request.getCustomer().getFirstName());
-        Assert.assertEquals("Level 5", request.getCustomer().getStreet1());
-        Assert.assertEquals(TransactionType.Purchase.name(), request.getTransactionType());
+        assertThat(request.getPayment().getTotalAmount()).isEqualTo(1000);
+        assertThat(request.getCustomer().getFirstName()).isEqualTo("John");
+        assertThat(request.getCustomer().getStreet1()).isEqualTo("Level 5");
+        assertThat(request.getTransactionType()).isEqualTo(TransactionType.Purchase.name());
 
     }
     
@@ -51,11 +50,11 @@ public class TransactionToResponsiveConverterTest {
     public void testDoConvertAuthorise() throws RapidSdkException {
         input.setCapture(false);
         CreateAccessCodeSharedRequest request = convert.doConvert(input);
-        Assert.assertEquals(1000d, request.getPayment().getTotalAmount(), 0.001);
-        Assert.assertEquals("John", request.getCustomer().getFirstName());
-        Assert.assertEquals("Level 5", request.getCustomer().getStreet1());
-        Assert.assertEquals(TransactionType.Purchase.name(), request.getTransactionType());
-        Assert.assertEquals(RequestMethod.Authorise.name(), request.getMethod());
+        assertThat(request.getPayment().getTotalAmount()).isEqualTo(1000);
+        assertThat(request.getCustomer().getFirstName()).isEqualTo("John");
+        assertThat(request.getCustomer().getStreet1()).isEqualTo("Level 5");
+        assertThat(request.getTransactionType()).isEqualTo(TransactionType.Purchase.name());
+        assertThat(request.getMethod()).isEqualTo(RequestMethod.Authorise.name());
 
     }
     
@@ -63,16 +62,11 @@ public class TransactionToResponsiveConverterTest {
     public void testDoConvertSaveCustomer() throws RapidSdkException {
         input.setSaveCustomer(true);
         CreateAccessCodeSharedRequest request = convert.doConvert(input);
-        Assert.assertEquals(1000d, request.getPayment().getTotalAmount(), 0.001);
-        Assert.assertEquals("John", request.getCustomer().getFirstName());
-        Assert.assertEquals("Level 5", request.getCustomer().getStreet1());
-        Assert.assertEquals(TransactionType.Purchase.name(), request.getTransactionType());
-        Assert.assertEquals(RequestMethod.TokenPayment.name(), request.getMethod());
-
-    }
-
-    @After
-    public void tearDown() {
+        assertThat(request.getPayment().getTotalAmount()).isEqualTo(1000);
+        assertThat(request.getCustomer().getFirstName()).isEqualTo("John");
+        assertThat(request.getCustomer().getStreet1()).isEqualTo("Level 5");
+        assertThat(request.getTransactionType()).isEqualTo(TransactionType.Purchase.name());
+        assertThat(request.getMethod()).isEqualTo(RequestMethod.TokenPayment.name());
 
     }
 }

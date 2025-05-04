@@ -1,12 +1,5 @@
 package com.eway.payment.rapid.sdk.message.convert;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.beans.external.FraudAction;
 import com.eway.payment.rapid.sdk.beans.external.TransactionStatus;
 import com.eway.payment.rapid.sdk.beans.internal.Payment;
@@ -15,12 +8,17 @@ import com.eway.payment.rapid.sdk.entities.DirectPaymentResponse;
 import com.eway.payment.rapid.sdk.exception.ParameterInvalidException;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.object.create.ObjectCreator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class DirectPaymentToTransStatusConverterTest {
 
     private DirectPaymentToTransStatusConverter convert;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new DirectPaymentToTransStatusConverter();
     }
@@ -41,18 +39,25 @@ public class DirectPaymentToTransStatusConverterTest {
         Verification verification = ObjectCreator.createVerification();
         response.setVerification(verification);
         TransactionStatus status = convert.doConvert(response);
-        assertEquals(response.getBeagleScore(), 0d, 0.001);
-        assertEquals(FraudAction.Allow, status.getFraudAction());
-        assertTrue(status.isCaptured());
+        assertThat(response.getBeagleScore()).isEqualByComparingTo(0d);
+        assertThat(status.getFraudAction()).isEqualTo(FraudAction.Allow);
+        assertThat(status.isCaptured()).isTrue();
     }
 
-    @Test(expected = ParameterInvalidException.class)
+    @Test
     public void testInvalidTransactionId() throws RapidSdkException {
+
+        // Given
         DirectPaymentResponse response = new DirectPaymentResponse();
         response.setTransactionID("abcd");
         Payment payment = ObjectCreator.createPayment();
         response.setPayment(payment);
-        convert.doConvert(response);
+
+        // When
+        assertThatThrownBy(() -> convert.doConvert(response))
+
+        // Then
+                .isInstanceOf(ParameterInvalidException.class);
     }
 
     @Test
@@ -65,10 +70,5 @@ public class DirectPaymentToTransStatusConverterTest {
         verification.setAddress("a");
         response.setVerification(verification);
         convert.doConvert(response);
-    }
-
-    @After
-    public void tearDown() {
-
     }
 }

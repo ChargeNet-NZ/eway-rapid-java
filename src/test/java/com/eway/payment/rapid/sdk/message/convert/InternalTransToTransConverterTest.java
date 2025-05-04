@@ -1,19 +1,18 @@
 package com.eway.payment.rapid.sdk.message.convert;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.beans.external.Transaction;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.object.create.ObjectCreator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class InternalTransToTransConverterTest {
 
     private BeanConverter<com.eway.payment.rapid.sdk.beans.internal.Transaction, Transaction> convert;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new InternalTransToTransConverter();
     }
@@ -23,13 +22,8 @@ public class InternalTransToTransConverterTest {
         com.eway.payment.rapid.sdk.beans.internal.Transaction internalTran = ObjectCreator.createInternalTransaction();
         internalTran.setCustomer(ObjectCreator.createInternalCustomer());
         Transaction tran = convert.doConvert(internalTran);
-        Assert.assertEquals("John", tran.getCustomer().getFirstName());
-        Assert.assertEquals(1000d, tran.getPaymentDetails().getTotalAmount(), 0.001);
-        Assert.assertEquals("Sydney", tran.getShippingDetails().getShippingAddress().getCity());
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(tran.getCustomer().getFirstName()).isEqualTo("John");
+        assertThat(tran.getPaymentDetails().getTotalAmount()).isEqualTo(1000);
+        assertThat(tran.getShippingDetails().getShippingAddress().getCity()).isEqualTo("Sydney");
     }
 }

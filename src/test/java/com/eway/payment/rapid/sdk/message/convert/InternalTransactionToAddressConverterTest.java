@@ -1,20 +1,19 @@
 package com.eway.payment.rapid.sdk.message.convert;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.beans.external.Address;
 import com.eway.payment.rapid.sdk.beans.internal.Transaction;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.object.create.ObjectCreator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class InternalTransactionToAddressConverterTest {
 
     private BeanConverter<com.eway.payment.rapid.sdk.beans.internal.Transaction, Address> convert;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new InternalTransactionToAddressConverter();
     }
@@ -23,11 +22,6 @@ public class InternalTransactionToAddressConverterTest {
     public void testDoConvert() throws RapidSdkException {
         Transaction t = ObjectCreator.createInternalTransaction();
         Address address = convert.doConvert(t);
-        Assert.assertEquals("Sydney", address.getCity());
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(address.getCity()).isEqualTo("Sydney");
     }
 }

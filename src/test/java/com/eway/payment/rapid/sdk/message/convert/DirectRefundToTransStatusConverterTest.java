@@ -1,22 +1,20 @@
 package com.eway.payment.rapid.sdk.message.convert;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.beans.external.TransactionStatus;
 import com.eway.payment.rapid.sdk.entities.DirectRefundResponse;
 import com.eway.payment.rapid.sdk.exception.ParameterInvalidException;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class DirectRefundToTransStatusConverterTest {
 
     private BeanConverter<DirectRefundResponse, TransactionStatus> convert;
 
-    @Before
+    @BeforeEach
     public void setup() {
         convert = new DirectRefundToTransStatusConverter();
     }
@@ -27,19 +25,21 @@ public class DirectRefundToTransStatusConverterTest {
         response.setTransactionID("123456");
         response.setTransactionStatus(new Boolean(true));
         TransactionStatus status = convert.doConvert(response);
-        assertEquals(123456, status.getTransactionID());
-        assertTrue(status.isStatus());
+        assertThat(status.getTransactionID()).isEqualTo(123456);
+        assertThat(status.isStatus()).isTrue();
     }
 
-    @Test(expected = ParameterInvalidException.class)
-    public void testInvalidTransactionId() throws RapidSdkException {
+    @Test
+    public void testInvalidTransactionId() {
+
+        // Given
         DirectRefundResponse response = new DirectRefundResponse();
         response.setTransactionID("abcd");
-        convert.doConvert(response);
-    }
 
-    @After
-    public void tearDown() {
+        // When
+        assertThatThrownBy(() -> convert.doConvert(response))
 
+        // Then
+            .isInstanceOf(ParameterInvalidException.class);
     }
 }

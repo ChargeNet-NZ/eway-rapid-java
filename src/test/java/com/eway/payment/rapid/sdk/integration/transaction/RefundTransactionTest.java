@@ -2,19 +2,24 @@ package com.eway.payment.rapid.sdk.integration.transaction;
 
 import com.eway.payment.rapid.sdk.InputModelFactory;
 import com.eway.payment.rapid.sdk.RapidClient;
-import com.eway.payment.rapid.sdk.beans.external.*;
+import com.eway.payment.rapid.sdk.beans.external.Address;
+import com.eway.payment.rapid.sdk.beans.external.CardDetails;
+import com.eway.payment.rapid.sdk.beans.external.Customer;
+import com.eway.payment.rapid.sdk.beans.external.PaymentDetails;
+import com.eway.payment.rapid.sdk.beans.external.PaymentMethod;
+import com.eway.payment.rapid.sdk.beans.external.Refund;
+import com.eway.payment.rapid.sdk.beans.external.Transaction;
 import com.eway.payment.rapid.sdk.beans.internal.RefundDetails;
 import com.eway.payment.rapid.sdk.integration.IntegrationTest;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
 import com.eway.payment.rapid.sdk.output.RefundResponse;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RefundTransactionTest extends IntegrationTest {
 
@@ -22,7 +27,7 @@ public class RefundTransactionTest extends IntegrationTest {
     Transaction t;
     Refund refund;
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         client = getSandboxClient();
@@ -55,7 +60,7 @@ public class RefundTransactionTest extends IntegrationTest {
         refund.getCustomer().getCardDetails().setStartMonth(null);
         refund.getCustomer().getCardDetails().setStartYear(null);
         RefundResponse refundRes = client.refund(refund);
-        Assert.assertTrue(refundRes.getTransactionStatus().isStatus());
+        assertThat(refundRes.getTransactionStatus().isStatus()).isTrue();
     }
 
     @Test
@@ -72,7 +77,7 @@ public class RefundTransactionTest extends IntegrationTest {
         refund.getCustomer().getCardDetails().setStartMonth(null);
         refund.getCustomer().getCardDetails().setStartYear(null);
         RefundResponse refundRes = client.refund(refund);
-        Assert.assertTrue(refundRes.getErrors().contains("V6151"));
+        assertThat(refundRes.getErrors()).contains("V6151");
     }
 
     @Test
@@ -90,7 +95,7 @@ public class RefundTransactionTest extends IntegrationTest {
         RefundResponse refundRes = client.refund(refund);
         refund.getRefundDetails().setOriginalTransactionID(String.valueOf(refundRes.getTransactionStatus().getTransactionID()));
         RefundResponse refundRes2 = client.refund(refund);
-        Assert.assertTrue(refundRes2.getErrors().contains("V6113"));
+        assertThat(refundRes2.getErrors()).contains("V6113");
     }
 
     @Test
@@ -106,7 +111,7 @@ public class RefundTransactionTest extends IntegrationTest {
         refund.getCustomer().getCardDetails().setStartMonth(null);
         refund.getCustomer().getCardDetails().setStartYear(null);
         RefundResponse refundRes = client.refund(refund);
-        Assert.assertTrue(refundRes.getErrors().contains("V6115"));
+        assertThat(refundRes.getErrors()).contains("V6115");
     }
 
     @Test
@@ -122,12 +127,7 @@ public class RefundTransactionTest extends IntegrationTest {
         refund.getCustomer().getCardDetails().setStartMonth(null);
         refund.getCustomer().getCardDetails().setStartYear(null);
         RefundResponse refundRes = client.refund(refund);
-        Assert.assertTrue(refundRes.getErrors().contains("V6115"));
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(refundRes.getErrors()).contains("V6115");
     }
 
 }

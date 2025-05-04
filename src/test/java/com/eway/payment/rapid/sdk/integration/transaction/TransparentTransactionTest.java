@@ -1,10 +1,5 @@
 package com.eway.payment.rapid.sdk.integration.transaction;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.eway.payment.rapid.sdk.InputModelFactory;
 import com.eway.payment.rapid.sdk.RapidClient;
 import com.eway.payment.rapid.sdk.beans.external.Address;
@@ -16,16 +11,20 @@ import com.eway.payment.rapid.sdk.beans.external.Transaction;
 import com.eway.payment.rapid.sdk.beans.external.TransactionType;
 import com.eway.payment.rapid.sdk.integration.IntegrationTest;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TransparentTransactionTest extends IntegrationTest {
 
     RapidClient client;
     Transaction t;
 
-    @Before
+    @BeforeEach
     public void setup() {
         client = getSandboxClient();
         t = InputModelFactory.createTransaction();
@@ -44,7 +43,7 @@ public class TransparentTransactionTest extends IntegrationTest {
     @Test
     public void testValidInput() {
         CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, t);
-        Assert.assertNotNull(res.getFormActionUrl());
+        assertThat(res.getFormActionUrl()).isNotNull();
     }
 
     @Test
@@ -58,7 +57,7 @@ public class TransparentTransactionTest extends IntegrationTest {
         transaction.setRedirectURL("http://www.eway.com.au");
 
         CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, transaction);
-        Assert.assertNotNull(res.getFormActionUrl());
+        assertThat(res.getFormActionUrl()).isNotNull();
     }
 
     @Test
@@ -70,7 +69,7 @@ public class TransparentTransactionTest extends IntegrationTest {
         tran.setCustomer(c);
         tran.setTransactionType(TransactionType.Purchase);
         CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, tran);
-        Assert.assertTrue(res.getErrors().contains("V6047"));
+        assertThat(res.getErrors()).contains("V6047");
     }
 
     /**
@@ -82,12 +81,7 @@ public class TransparentTransactionTest extends IntegrationTest {
         t.getPaymentDetails().setTotalAmount(-1000);
         t.getCustomer().getCardDetails().setExpiryMonth("13");
         CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, t);
-        Assert.assertTrue(res.getErrors().contains("V6011"));
-    }
-
-    @After
-    public void tearDown() {
-
+        assertThat(res.getErrors()).contains("V6011");
     }
 
 }
