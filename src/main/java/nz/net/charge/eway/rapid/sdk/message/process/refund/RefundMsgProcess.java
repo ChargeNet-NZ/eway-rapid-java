@@ -1,0 +1,50 @@
+package nz.net.charge.eway.rapid.sdk.message.process.refund;
+
+import nz.net.charge.eway.rapid.sdk.beans.external.Refund;
+import nz.net.charge.eway.rapid.sdk.entities.DirectRefundRequest;
+import nz.net.charge.eway.rapid.sdk.entities.DirectRefundResponse;
+import nz.net.charge.eway.rapid.sdk.entities.Request;
+import nz.net.charge.eway.rapid.sdk.entities.Response;
+import nz.net.charge.eway.rapid.sdk.exception.RapidSdkException;
+import nz.net.charge.eway.rapid.sdk.message.convert.BeanConverter;
+import nz.net.charge.eway.rapid.sdk.message.convert.request.RefundToDirectRefundReqConverter;
+import nz.net.charge.eway.rapid.sdk.message.convert.response.DirectRefundToRefundResponseConverter;
+import nz.net.charge.eway.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
+import nz.net.charge.eway.rapid.sdk.output.RefundResponse;
+import nz.net.charge.eway.rapid.sdk.util.Constant;
+import org.springframework.web.reactive.function.client.WebClient;
+
+/**
+ * Refund message process
+ */
+public class RefundMsgProcess extends AbstractMakeRequestMessageProcess<Refund, RefundResponse> {
+
+    /**
+     * @param webClient The web client to call Rapid API
+     * @param requestPath Path of request URL. Used to make full web service URL
+     */
+    public RefundMsgProcess(WebClient webClient, String... requestPath) {
+        super(webClient, requestPath);
+    }
+
+    @Override
+    protected Request createRequest(Refund refund) throws RapidSdkException {
+        BeanConverter<Refund, DirectRefundRequest> reqConverter = new RefundToDirectRefundReqConverter();
+        return reqConverter.doConvert(refund);
+    }
+
+    @Override
+    protected Response sendRequest(Request req) throws RapidSdkException {
+        DirectRefundRequest request = (DirectRefundRequest) req;
+        addRequestPath(request.getRefund().getOriginalTransactionID(), Constant.REFUND_SUBPATH_METHOD);
+        return doPost(request, DirectRefundResponse.class);
+    }
+
+    @Override
+    protected RefundResponse makeResult(Response res) throws RapidSdkException {
+        DirectRefundResponse response = (DirectRefundResponse) res;
+        BeanConverter<DirectRefundResponse, RefundResponse> responseConvert = new DirectRefundToRefundResponseConverter();
+        return responseConvert.doConvert(response);
+    }
+
+}

@@ -47,9 +47,16 @@ See the [eWAY Rapid API Reference](https://eway.io/api-v3/) for usage details.
 A simple Direct payment example:
 
 ```java
-import com.eway.payment.rapid.sdk.*;
-import com.eway.payment.rapid.sdk.beans.external.*;
-import com.eway.payment.rapid.sdk.output.*;
+
+import nz.net.charge.eway.rapid.sdk.RapidClient;
+import nz.net.charge.eway.rapid.sdk.RapidSDK;
+import nz.net.charge.eway.rapid.sdk.beans.external.CardDetails;
+import nz.net.charge.eway.rapid.sdk.beans.external.Customer;
+import nz.net.charge.eway.rapid.sdk.beans.external.PaymentDetails;
+import nz.net.charge.eway.rapid.sdk.beans.external.PaymentMethod;
+import nz.net.charge.eway.rapid.sdk.beans.external.Transaction;
+import nz.net.charge.eway.rapid.sdk.beans.external.TransactionType;
+import nz.net.charge.eway.rapid.sdk.output.CreateTransactionResponse;
 
 public class EwayRapid {
     public static void main(String[] args) {
