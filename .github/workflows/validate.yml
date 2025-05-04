@@ -1,0 +1,44 @@
+name: Eway Rapid API Validation
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  Setup:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.setup.outputs.version }}
+    steps:
+      - id: setup
+        run: |
+          echo "version=${{ github.event.pull_request && github.event.pull_request.head.sha || github.sha }}" >> $GITHUB_OUTPUT
+
+          cat $GITHUB_OUTPUT
+
+  Validate:
+    needs: Setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git checkout ${{ needs.setup.outputs.version }}
+
+      - id: validate
+        uses: ./.github/actions/validate
+        with:
+          version: ${{ needs.Setup.outputs.version }}
+
+      - name: Notify Slack
+        if: success() || failure()
+        uses: ./.github/actions/notify-slack
+        with:
+          webhook-url: ${{ secrets.SLACK_BUILD_HAPPENS_URL }}
+          hash: ${{ needs.Setup.outputs.version }}
+          env: API Server

@@ -1,0 +1,29 @@
+name: 'Validate'
+description: 'Validate'
+inputs:
+  version:
+    required: true
+outputs:
+  validated:
+    value: ${{ steps.validated.outputs.validated }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        distribution: corretto
+        java-version: 17
+        cache: maven
+    - uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: 3.8.5
+    - uses: KengoTODA/actions-setup-docker-compose@main
+      with:
+        version: '1.29.2'
+    - name: Run Tests
+      shell: bash
+      run: mvn --fail-fast clean test
+    - uses: mikepenz/action-junit-report@v3
+      if: always()
+      with:
+        report_paths: '**/surefire-reports/TEST-*.xml'
