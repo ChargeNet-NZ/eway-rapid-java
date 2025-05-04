@@ -2,38 +2,11 @@
 
 All Notable changes will be documented in this file
 
-## 1.4.0
-
- - Added Option fields to TransactionQuery response
- - Updated dependencies
-
-## 1.3.0
-
- - Updated SDK to use TLS 1.2 when connecting to eWAY
- - Updated Jackson (JSON library) to version 2
-
-## 1.2.0
-
- - Added ability to set the Rapid API version and new associated fields
-
-## 1.1.2
-
- - Added SecuredCardData field and new messages for Secure Fields
- - Added customer email to the customer response object
- - Created a test jar with ObjectCreator for testing
-
-## 1.1.1
-
- - Fix for new Rapid fields causing exceptions
- - Changed create and update customer to use MOTO for TransactionType to support not sending the CVN
- - Allow one digit expiry months (thanks @davidwebster48)
-
-## 1.1.0
-
- - Added ability to update a token customer using client.update()
- - Added SaveCustomer flag to Transactions to create a token when a transaction is completed.
- - Added a debug flag to enable logging of errors
-
 ## 1.0.0
 
- - First release
+ - Forked from EWay Rapid Java SDK
+ - Updated to use Java 17
+ - Migrated from JUnit 4 to JUnit 5
+ - Fixed expiring tests
+ - Changed package and artifact names to reflect this is a ChargeNet fork
+ - Replaced Jersey with WebFlux for more seamless integration with Spring Framework
