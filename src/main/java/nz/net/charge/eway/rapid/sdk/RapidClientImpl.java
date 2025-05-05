@@ -192,7 +192,7 @@ public class RapidClientImpl implements RapidClient {
         conn.connect();
     }
 
-    public CreateTransactionResponse create(PaymentMethod paymentMethod, Transaction transaction) {
+    public Mono<CreateTransactionResponse> create(PaymentMethod paymentMethod, Transaction transaction) {
         if (!isValid()) {
             return makeResponseWithException(new APIKeyInvalidException("API Key, Password or Rapid endpoint is invalid"),
                     CreateTransactionResponse.class);
@@ -223,14 +223,15 @@ public class RapidClientImpl implements RapidClient {
                 default:
                     return makeResponseWithException(new ParameterInvalidException("Unsupported Payment Method"), CreateTransactionResponse.class);
             }
-            return process.doWork(transaction);
+            return process.doWork(transaction)
+                    .onErrorResume(RapidSdkException.class, e -> makeResponseWithException(e, CreateTransactionResponse.class));
         } catch (RapidSdkException e) {
             LOGGER.error(e.getMessage());
             return makeResponseWithException(e, CreateTransactionResponse.class);
         }
     }
 
-    public CreateCustomerResponse create(PaymentMethod PaymentMethod, Customer customer) {
+    public Mono<CreateCustomerResponse> create(PaymentMethod PaymentMethod, Customer customer) {
         if (!isValid()) {
             return makeResponseWithException(new APIKeyInvalidException("API Key, Password or Rapid endpoint is invalid"),
                     CreateCustomerResponse.class);
@@ -250,14 +251,15 @@ public class RapidClientImpl implements RapidClient {
                 default:
                     return makeResponseWithException(new ParameterInvalidException("Unsupported Payment Method"), CreateCustomerResponse.class);
             }
-            return process.doWork(customer);
+            return process.doWork(customer)
+                    .onErrorResume(RapidSdkException.class, e -> makeResponseWithException(e, CreateCustomerResponse.class));
         } catch (RapidSdkException e) {
             LOGGER.error(e.getMessage());
             return makeResponseWithException(e, CreateCustomerResponse.class);
         }
     }
 
-    public CreateCustomerResponse update(PaymentMethod paymentMethod, Customer customer) {
+    public Mono<CreateCustomerResponse> update(PaymentMethod paymentMethod, Customer customer) {
         if (!isValid()) {
             return makeResponseWithException(new APIKeyInvalidException("APIKey, password or rapid endpoint param had been null or empty"),
                     CreateCustomerResponse.class);
@@ -277,18 +279,19 @@ public class RapidClientImpl implements RapidClient {
                 default:
                     return makeResponseWithException(new ParameterInvalidException("Not support this payment type"), CreateCustomerResponse.class);
             }
-            return process.doWork(customer);
+            return process.doWork(customer)
+                    .onErrorResume(RapidSdkException.class, e -> makeResponseWithException(e, CreateCustomerResponse.class));
         } catch (RapidSdkException e) {
             LOGGER.error(e.getMessage());
             return makeResponseWithException(e, CreateCustomerResponse.class);
         }
     }
 
-    public QueryTransactionResponse queryTransaction(int transactionId) {
+    public Mono<QueryTransactionResponse> queryTransaction(int transactionId) {
         return queryTransaction(String.valueOf(transactionId));
     }
 
-    public QueryTransactionResponse queryTransaction(String accessCode) {
+    public Mono<QueryTransactionResponse> queryTransaction(String accessCode) {
         return queryTransactionWithPath(accessCode, Constant.TRANSACTION_METHOD);
     }
 
@@ -299,21 +302,22 @@ public class RapidClientImpl implements RapidClient {
      * @param requestPath The request path
      * @return The transaction query response
      */
-    private QueryTransactionResponse queryTransactionWithPath(String request, String... requestPath) {
+    private Mono<QueryTransactionResponse> queryTransactionWithPath(String request, String... requestPath) {
         if (!isValid()) {
             return makeResponseWithException(new APIKeyInvalidException("API Key, Password or Rapid endpoint is invalid"),
                     QueryTransactionResponse.class);
         }
         try {
             MessageProcess<String, QueryTransactionResponse> process = new TransQueryMsgProcess(getEwayWebClient(), requestPath);
-            return process.doWork(request);
+            return process.doWork(request)
+                    .onErrorResume(RapidSdkException.class, e -> makeResponseWithException(e, QueryTransactionResponse.class));
         } catch (RapidSdkException e) {
             LOGGER.error(e.getMessage());
             return makeResponseWithException(e, QueryTransactionResponse.class);
         }
     }
 
-    public QueryTransactionResponse queryTransaction(TransactionFilter filter) {
+    public Mono<QueryTransactionResponse> queryTransaction(TransactionFilter filter) {
         Integer indexOfValue = filter.calculateIndexOfValue();
         if (indexOfValue == null) {
             return makeResponseWithException(new APIKeyInvalidException("Invalid transaction filter input"), QueryTransactionResponse.class);
@@ -331,7 +335,7 @@ public class RapidClientImpl implements RapidClient {
         };
     }
 
-    public QueryCustomerResponse queryCustomer(long tokenCustomerID) {
+    public Mono<QueryCustomerResponse> queryCustomer(long tokenCustomerID) {
         if (!isValid()) {
             return makeResponseWithException(new APIKeyInvalidException("API Key, Password or Rapid endpoint is invalid"),
                     QueryCustomerResponse.class);
@@ -339,7 +343,8 @@ public class RapidClientImpl implements RapidClient {
         try {
             MessageProcess<String, QueryCustomerResponse> process = new QueryCustomerMsgProcess(getEwayWebClient(),
                     Constant.DIRECT_CUSTOMER_SEARCH_METHOD.concat(Constant.JSON_SUFIX));
-            return process.doWork(String.valueOf(tokenCustomerID));
+            return process.doWork(String.valueOf(tokenCustomerID))
+                    .onErrorResume(RapidSdkException.class, e -> makeResponseWithException(e, QueryCustomerResponse.class));
         } catch (RapidSdkException e) {
             LOGGER.error(e.getMessage());
             return makeResponseWithException(e, QueryCustomerResponse.class);
@@ -347,7 +352,7 @@ public class RapidClientImpl implements RapidClient {
 
     }
 
-    public RefundResponse refund(Refund refund) {
+    public Mono<RefundResponse> refund(Refund refund) {
         if (!isValid()) {
             return makeResponseWithException(new APIKeyInvalidException("API Key, Password or Rapid endpoint is invalid"),
                     RefundResponse.class);
@@ -355,21 +360,23 @@ public class RapidClientImpl implements RapidClient {
         try {
             MessageProcess<Refund, RefundResponse> process = null;
             process = new RefundMsgProcess(getEwayWebClient(), Constant.TRANSACTION_METHOD);
-            return process.doWork(refund);
+            return process.doWork(refund)
+                    .onErrorResume(RapidSdkException.class, e -> makeResponseWithException(e, RefundResponse.class));
         } catch (RapidSdkException e) {
             LOGGER.error(e.getMessage());
             return makeResponseWithException(e, RefundResponse.class);
         }
     }
 
-    public RefundResponse cancel(Refund refund) {
+    public Mono<RefundResponse> cancel(Refund refund) {
         if (!isValid()) {
             return makeResponseWithException(new APIKeyInvalidException("API Key, Password or Rapid endpoint is invalid"),
                     RefundResponse.class);
         }
         try {
             MessageProcess<Refund, RefundResponse> process = new CancelAuthorisationMsgProcess(getEwayWebClient(), Constant.CANCEL_AUTHORISATION_METHOD);
-            return process.doWork(refund);
+            return process.doWork(refund)
+                    .onErrorResume(RapidSdkException.class, e -> makeResponseWithException(e, RefundResponse.class));
         } catch (RapidSdkException e) {
             LOGGER.error(e.getMessage());
             return makeResponseWithException(e, RefundResponse.class);
@@ -498,7 +505,7 @@ public class RapidClientImpl implements RapidClient {
      * @param c The response class
      * @return The response with an exception
      */
-    private <T extends ResponseOutput> T makeResponseWithException(RapidSdkException e, Class<T> c) {
+    private <T extends ResponseOutput> Mono<T> makeResponseWithException(RapidSdkException e, Class<T> c) {
 
         if (this.debug) {
             LOGGER.debug("RapidSdkException", e);
@@ -508,11 +515,11 @@ public class RapidClientImpl implements RapidClient {
             T t;
             t = c.getDeclaredConstructor().newInstance();
             t.getErrors().add(e.getErrorCode());
-            return t;
+            return Mono.just(t);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e1) {
             LOGGER.error(e1.getMessage(), e1);
         }
-        return null;
+        return Mono.empty();
     }
 
 }

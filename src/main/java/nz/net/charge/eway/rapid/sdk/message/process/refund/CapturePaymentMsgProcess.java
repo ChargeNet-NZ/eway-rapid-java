@@ -12,6 +12,7 @@ import nz.net.charge.eway.rapid.sdk.message.convert.response.CapturePaymentToCre
 import nz.net.charge.eway.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import nz.net.charge.eway.rapid.sdk.output.CreateTransactionResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 /**
  * Capture payment message process
@@ -23,10 +24,12 @@ public class CapturePaymentMsgProcess extends AbstractMakeRequestMessageProcess<
     }
 
     @Override
-    protected CreateTransactionResponse makeResult(Response res) throws RapidSdkException {
-        CapturePaymentResponse response = (CapturePaymentResponse) res;
-        BeanConverter<CapturePaymentResponse, CreateTransactionResponse> convert = new CapturePaymentToCreateTransactionConverter();
-        return convert.doConvert(response);
+    protected Mono<CreateTransactionResponse> makeResult(Mono<? extends Response> res) {
+        return res.map(response -> {
+            BeanConverter<CapturePaymentResponse, CreateTransactionResponse> converter =
+                    new CapturePaymentToCreateTransactionConverter();
+            return converter.doConvert((CapturePaymentResponse) response);
+        });
     }
 
     @Override
@@ -36,7 +39,7 @@ public class CapturePaymentMsgProcess extends AbstractMakeRequestMessageProcess<
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Mono<CapturePaymentResponse> sendRequest(Request req) throws RapidSdkException {
         return doPost(req, CapturePaymentResponse.class);
     }
 

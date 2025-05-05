@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,9 +40,9 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
         }
     }
 
-    public final V doWork(T input) throws RapidSdkException {
+    public final Mono<V> doWork(T input) throws RapidSdkException {
         this.t = input;
-        Response response = processPostMsg(input);
+        Mono<? extends Response> response = processPostMsg(input);
         if (response != null) {
             return makeResult(response);
         }
@@ -58,40 +59,24 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
      * @return Instance of response class
      * @throws RapidSdkException base SDK exception
      */
-    protected final <U, K> U doPost(K request, Class<U> responseClass) throws RapidSdkException {
-        try {
-            WebClient client = getWebClient();
+    protected final <U, K> Mono<U> doPost(K request, Class<U> responseClass) throws RapidSdkException {
 
-            U response = client.post()
-                    .uri(builder -> {
-                        final String path = String.join("/", getRequestPath());
-                        builder.path(path);
+        WebClient client = getWebClient();
 
-                        return builder.build();
-                    })
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(request)
-                    .retrieve()
-                    .bodyToMono(responseClass)
-                    .block();
+        return client.post()
+                .uri(builder -> {
+                    final String path = String.join("/", getRequestPath());
+                    builder.path(path);
 
-            return response;
-        } catch (WebClientResponseException e) {
-            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
-            } else if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
-                throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
-            } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
-            } else if (e.getStatusCode().is5xxServerError()) {
-                throw new CommunicationFailureException("Internal system error communicating with Rapid API", e);
-            } else {
-                throw new SystemErrorException(e.getMessage(), e);
-            }
-        } catch (WebClientRequestException e) {
-            throw new CommunicationFailureException("Error using TLS 1.2 to connect to Rapid: client exception", e);
-        }
+                    return builder.build();
+                })
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(responseClass)
+                .onErrorResume(WebClientResponseException.class, this::handleWebClientResponseException)
+                .onErrorResume(WebClientRequestException.class, this::handleWebClientRequestException);
     }
 
     /**
@@ -104,41 +89,24 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
      * @return Instance of response class
      * @throws RapidSdkException base SDK exception
      */
-    protected final <U, K> U doPut(K request, Class<U> responseClass) throws RapidSdkException {
-        try {
-            WebClient client = getWebClient();
+    protected final <U, K> Mono<U> doPut(K request, Class<U> responseClass) throws RapidSdkException {
 
-            U response = client.put()
-                    .uri(builder -> {
-                        final String path = String.join("/", getRequestPath());
-                        builder.path(path);
+        WebClient client = getWebClient();
 
-                        return builder.build();
-                    })
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(request)
-                    .retrieve()
-                    .bodyToMono(responseClass)
-                    .block();
+        return client.put()
+                .uri(builder -> {
+                    final String path = String.join("/", getRequestPath());
+                    builder.path(path);
 
-            return response;
-
-        } catch (WebClientResponseException e) {
-            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
-            } else if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
-                throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
-            } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
-            } else if (e.getStatusCode().is5xxServerError()) {
-                throw new CommunicationFailureException("Internal system error communicating with Rapid API", e);
-            } else {
-                throw new SystemErrorException(e.getMessage(), e);
-            }
-        } catch (WebClientRequestException e) {
-            throw new CommunicationFailureException("Error using TLS 1.2 to connect to Rapid: client exception", e);
-        }
+                    return builder.build();
+                })
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(responseClass)
+                .onErrorResume(WebClientResponseException.class, this::handleWebClientResponseException)
+                .onErrorResume(WebClientRequestException.class, this::handleWebClientRequestException);
     }
 
     /**
@@ -150,37 +118,23 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
      * @return Instance of response class
      * @throws RapidSdkException base SDK exception
      */
-    protected final <U> U doGet(String request, Class<U> responseClass) throws RapidSdkException {
-        try {
-            WebClient client = getWebClient();
+    protected final <U> Mono<U> doGet(String request, Class<U> responseClass) throws RapidSdkException {
 
-            return client
-                    .get()
-                    .uri(builder -> {
-                        final String path = String.join("/", getRequestPath());
-                        builder.path(path);
+        WebClient client = getWebClient();
 
-                        return builder.path("/" + request).build();
-                    })
-                    .accept(MediaType.APPLICATION_JSON)
-                    .retrieve()
-                    .bodyToMono(responseClass)
-                    .block();
-        } catch (WebClientResponseException e) {
-            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
-            } else if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
-                throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
-            } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
-            } else if (e.getStatusCode().is5xxServerError()) {
-                throw new CommunicationFailureException("Internal system error communicating with Rapid API", e);
-            } else {
-                throw new SystemErrorException(e.getMessage(), e);
-            }
-        } catch (WebClientRequestException e) {
-            throw new CommunicationFailureException("Error using TLS 1.2 to connect to Rapid: client exception", e);
-        }
+        return client
+                .get()
+                .uri(builder -> {
+                    final String path = String.join("/", getRequestPath());
+                    builder.path(path);
+
+                    return builder.path("/" + request).build();
+                })
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(responseClass)
+                .onErrorResume(WebClientResponseException.class, this::handleWebClientResponseException)
+                .onErrorResume(WebClientRequestException.class, this::handleWebClientRequestException);
     }
 
     /**
@@ -223,7 +177,7 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
      * @return Instance of response class
      * @throws RapidSdkException base SDK exception
      */
-    protected abstract Response processPostMsg(T req) throws RapidSdkException;
+    protected abstract Mono<? extends Response> processPostMsg(T req) throws RapidSdkException;
 
     /**
      * Create result from web service response object
@@ -232,7 +186,7 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
      * @return Instance of output class
      * @throws RapidSdkException base SDK exception
      */
-    protected abstract V makeResult(Response res) throws RapidSdkException;
+    protected abstract Mono<V> makeResult(Mono<? extends Response> res);
 
     /**
      * Get web resource object to connect to Rapid API
@@ -241,6 +195,24 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
      */
     protected final WebClient getWebClient() {
         return webClient;
+    }
+
+    private <U> Mono<? extends U> handleWebClientResponseException(final WebClientResponseException e) {
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+            throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
+        } else if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
+            throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
+        } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new AuthenticationFailureException("Authentication failed on the endpoint", e);
+        } else if (e.getStatusCode().is5xxServerError()) {
+            throw new CommunicationFailureException("Internal system error communicating with Rapid API", e);
+        } else {
+            throw new SystemErrorException(e.getMessage(), e);
+        }
+    }
+
+    private <U> Mono<? extends U> handleWebClientRequestException(final WebClientRequestException e) {
+        throw new CommunicationFailureException("Error using TLS 1.2 to connect to Rapid: client exception", e);
     }
 
 }

@@ -41,9 +41,9 @@ public class AuthorizationTransactionTest extends IntegrationTest {
     @Test
     public void testValidInput() {
         t.setCapture(false);
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t).block();
         t.setAuthTransactionID(res.getTransactionStatus().getTransactionID());
-        CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t);
+        CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t).block();
         assertThat(res.getTransactionStatus().isStatus()).isTrue();
         assertThat(authRes.getTransactionStatus().getTransactionID()).isNotEqualTo(0);
     }
@@ -51,16 +51,16 @@ public class AuthorizationTransactionTest extends IntegrationTest {
     @Test
     public void testInvalidInput1() {
         t.setAuthTransactionID(1234);
-        CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t);
+        CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t).block();
         assertThat(authRes.getErrors().get(0)).contains("V6134");
     }
 
     @Test
     public void testInvalidInput2() {
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t).block();
         t.setAuthTransactionID(res.getTransactionStatus().getTransactionID());
-        CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t);
-        CreateTransactionResponse authRes2 = client.create(PaymentMethod.Authorisation, t);
+        CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t).block();
+        CreateTransactionResponse authRes2 = client.create(PaymentMethod.Authorisation, t).block();
         assertThat(authRes2.getTransactionStatus().isStatus()).isFalse();
     }
 

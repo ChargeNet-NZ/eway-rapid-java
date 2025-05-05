@@ -45,7 +45,7 @@ public class DirectTransactionTest extends IntegrationTest {
 
     @Test
     public void testValidInput() {
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t).block();
         assertThat(res.getTransactionStatus().isStatus()).isTrue();
         assertThat(res.getTransactionStatus().getTransactionID()).isNotEqualTo(0);
     }
@@ -65,7 +65,7 @@ public class DirectTransactionTest extends IntegrationTest {
         transaction.setCustomer(customer);
         transaction.setTransactionType(TransactionType.Purchase);
 
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, transaction);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, transaction).block();
 
         assertThat(res.getTransactionStatus().isStatus()).isTrue();
         assertThat(res.getTransactionStatus().getTransactionID()).isNotEqualTo(0);
@@ -80,7 +80,7 @@ public class DirectTransactionTest extends IntegrationTest {
         c.setCardDetails(cd);
         tran.setCustomer(c);
         tran.setTransactionType(TransactionType.Purchase);
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, tran);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, tran).block();
 
         assertThat(res.getTransactionStatus().isStatus()).isFalse();
         assertThat(res.getTransactionStatus().getTransactionID()).isEqualTo(0);
@@ -96,7 +96,7 @@ public class DirectTransactionTest extends IntegrationTest {
     @Test
     public void testInvalidInput() {
         t.getCustomer().getCardDetails().setExpiryMonth("13");
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t).block();
         assertThat(res.getTransactionStatus().isStatus()).isFalse();
         assertThat(res.getTransactionStatus().getTransactionID()).isEqualTo(0);
         assertThat(res.getErrors()).contains("V6101");

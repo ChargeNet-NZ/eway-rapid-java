@@ -12,6 +12,7 @@ import nz.net.charge.eway.rapid.sdk.message.convert.response.AccessCodeSharedToC
 import nz.net.charge.eway.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import nz.net.charge.eway.rapid.sdk.output.CreateTransactionResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 /**
  * Create transaction with responsive shared message process
@@ -33,14 +34,16 @@ public class TransResponsiveSharedMsgProcess extends AbstractMakeRequestMessageP
     }
 
     @Override
-    protected CreateTransactionResponse makeResult(Response res) throws RapidSdkException {
-        CreateAccessCodeSharedResponse response = (CreateAccessCodeSharedResponse) res;
-        BeanConverter<CreateAccessCodeSharedResponse, CreateTransactionResponse> convert = new AccessCodeSharedToCreateTransConverter();
-        return convert.doConvert(response);
+    protected Mono<CreateTransactionResponse> makeResult(Mono<? extends Response> res) {
+        return res.map(response -> {
+            BeanConverter<CreateAccessCodeSharedResponse, CreateTransactionResponse> converter =
+                    new AccessCodeSharedToCreateTransConverter();
+            return converter.doConvert((CreateAccessCodeSharedResponse) response);
+        });
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Mono<CreateAccessCodeSharedResponse> sendRequest(Request req) throws RapidSdkException {
         return doPost(req, CreateAccessCodeSharedResponse.class);
     }
 

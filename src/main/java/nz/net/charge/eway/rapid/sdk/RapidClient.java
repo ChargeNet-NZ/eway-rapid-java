@@ -10,6 +10,7 @@ import nz.net.charge.eway.rapid.sdk.output.CreateTransactionResponse;
 import nz.net.charge.eway.rapid.sdk.output.QueryCustomerResponse;
 import nz.net.charge.eway.rapid.sdk.output.QueryTransactionResponse;
 import nz.net.charge.eway.rapid.sdk.output.RefundResponse;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -63,8 +64,8 @@ public interface RapidClient {
      * @return The transaction response. This will vary depending on the payment
      * method
      */
-    CreateTransactionResponse create(PaymentMethod paymentMethod,
-            Transaction transaction);
+    Mono<CreateTransactionResponse> create(PaymentMethod paymentMethod,
+                                           Transaction transaction);
 
     /**
      * Creates a token customer to store card details in the secure eWAY Vault
@@ -77,7 +78,7 @@ public interface RapidClient {
      * @return The create customer response. This will vary depending on the
      * payment method used.
      */
-    CreateCustomerResponse create(PaymentMethod paymentMethod, Customer customer);
+    Mono<CreateCustomerResponse> create(PaymentMethod paymentMethod, Customer customer);
 
     /**
      * Updates an existing token customer for the merchant in their eWAY account.
@@ -90,7 +91,7 @@ public interface RapidClient {
      * @return The create customer response. This will vary depending on the
      * payment method used.
      */
-    CreateCustomerResponse update(PaymentMethod paymentMethod, Customer customer);
+    Mono<CreateCustomerResponse> update(PaymentMethod paymentMethod, Customer customer);
 
     /**
      * Gets transaction information given an eWAY Transaction ID
@@ -98,7 +99,7 @@ public interface RapidClient {
      * @param id eWAY Transaction ID
      * @return The transaction query response
      */
-    QueryTransactionResponse queryTransaction(int id);
+    Mono<QueryTransactionResponse> queryTransaction(int id);
 
     /**
      * Gets transaction information given an access code
@@ -106,7 +107,7 @@ public interface RapidClient {
      * @param accessCode Access code for the transaction to query
      * @return The transaction query response
      */
-    QueryTransactionResponse queryTransaction(String accessCode);
+    Mono<QueryTransactionResponse> queryTransaction(String accessCode);
 
     /**
      * Used to query transaction by one of four properties transaction id, access
@@ -115,7 +116,7 @@ public interface RapidClient {
      * @param filter A TransactionFilter with the search details
      * @return The transaction query response
      */
-    QueryTransactionResponse queryTransaction(TransactionFilter filter);
+    Mono<QueryTransactionResponse> queryTransaction(TransactionFilter filter);
 
     /**
      * Get the details of a Token Customer.
@@ -123,7 +124,7 @@ public interface RapidClient {
      * @param tokenCustomerID The Token Customer ID
      * @return Customer query response
      */
-    QueryCustomerResponse queryCustomer(long tokenCustomerID);
+    Mono<QueryCustomerResponse> queryCustomer(long tokenCustomerID);
 
     /**
      * Refunds all or part of a transaction.
@@ -131,7 +132,7 @@ public interface RapidClient {
      * @param refund Contains information of the refund
      * @return The refund transaction response
      */
-    RefundResponse refund(Refund refund);
+    Mono<RefundResponse> refund(Refund refund);
 
     /**
      * Cancel a non captured transaction (an Authorisation)
@@ -139,7 +140,7 @@ public interface RapidClient {
      * @param refund Contains information of the authorisation to cancel
      * @return The cancel transaction response
      */
-    RefundResponse cancel(Refund refund);
+    Mono<RefundResponse> cancel(Refund refund);
 
     /**
      * Get the current Rapid endpoint

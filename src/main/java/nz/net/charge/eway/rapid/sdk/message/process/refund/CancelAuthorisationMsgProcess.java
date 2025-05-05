@@ -13,6 +13,7 @@ import nz.net.charge.eway.rapid.sdk.message.convert.response.CancelAuthorisation
 import nz.net.charge.eway.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import nz.net.charge.eway.rapid.sdk.output.RefundResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 public class CancelAuthorisationMsgProcess extends AbstractMakeRequestMessageProcess<Refund, RefundResponse> {
 
@@ -36,14 +37,17 @@ public class CancelAuthorisationMsgProcess extends AbstractMakeRequestMessagePro
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Mono<CancelAuthorisationResponse> sendRequest(Request req) throws RapidSdkException {
         return doPost(req, CancelAuthorisationResponse.class);
     }
 
     @Override
-    protected RefundResponse makeResult(Response res) throws RapidSdkException {
-        BeanConverter<CancelAuthorisationResponse, RefundResponse> convert = new CancelAuthorisationToRefundConverter(getInput());
-        return convert.doConvert((CancelAuthorisationResponse) res);
+    protected Mono<RefundResponse> makeResult(Mono<? extends Response> res) {
+        return res.map(response -> {
+            BeanConverter<CancelAuthorisationResponse, RefundResponse> converter =
+                    new CancelAuthorisationToRefundConverter(getInput());
+            return converter.doConvert((CancelAuthorisationResponse) response);
+        });
     }
 
 }

@@ -13,6 +13,7 @@ import nz.net.charge.eway.rapid.sdk.message.process.AbstractMakeRequestMessagePr
 import nz.net.charge.eway.rapid.sdk.output.RefundResponse;
 import nz.net.charge.eway.rapid.sdk.util.Constant;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 /**
  * Refund message process
@@ -34,17 +35,19 @@ public class RefundMsgProcess extends AbstractMakeRequestMessageProcess<Refund, 
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Mono<DirectRefundResponse> sendRequest(Request req) throws RapidSdkException {
         DirectRefundRequest request = (DirectRefundRequest) req;
         addRequestPath(request.getRefund().getOriginalTransactionID(), Constant.REFUND_SUBPATH_METHOD);
         return doPost(request, DirectRefundResponse.class);
     }
 
     @Override
-    protected RefundResponse makeResult(Response res) throws RapidSdkException {
-        DirectRefundResponse response = (DirectRefundResponse) res;
-        BeanConverter<DirectRefundResponse, RefundResponse> responseConvert = new DirectRefundToRefundResponseConverter();
-        return responseConvert.doConvert(response);
+    protected Mono<RefundResponse> makeResult(Mono<? extends Response> res) {
+        return res.map(response -> {
+            BeanConverter<DirectRefundResponse, RefundResponse> converter =
+                    new DirectRefundToRefundResponseConverter();
+            return converter.doConvert((DirectRefundResponse) response);
+        });
     }
 
 }

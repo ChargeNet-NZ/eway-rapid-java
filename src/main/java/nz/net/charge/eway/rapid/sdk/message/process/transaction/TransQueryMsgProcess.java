@@ -9,6 +9,7 @@ import nz.net.charge.eway.rapid.sdk.message.process.AbstractMessageProcess;
 import nz.net.charge.eway.rapid.sdk.output.QueryTransactionResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 /**
  * Query transaction message process
@@ -24,15 +25,17 @@ public class TransQueryMsgProcess extends AbstractMessageProcess<String, QueryTr
     }
 
     @Override
-    protected Response processPostMsg(String req) throws RapidSdkException {
+    protected Mono<? extends Response> processPostMsg(String req) throws RapidSdkException {
         return doGet(StringUtils.isBlank(req) ? "0" : req, TransactionSearchResponse.class);
     }
 
     @Override
-    protected QueryTransactionResponse makeResult(Response res) throws RapidSdkException {
-        TransactionSearchResponse response = (TransactionSearchResponse) res;
-        BeanConverter<TransactionSearchResponse, QueryTransactionResponse> converter = new SearchToQueryTransConverter();
-        return converter.doConvert(response);
+    protected Mono<QueryTransactionResponse> makeResult(Mono<? extends Response> res) {
+        return res.map(response -> {
+            BeanConverter<TransactionSearchResponse, QueryTransactionResponse> converter =
+                    new SearchToQueryTransConverter();
+            return converter.doConvert((TransactionSearchResponse) response);
+        });
     }
 
 }

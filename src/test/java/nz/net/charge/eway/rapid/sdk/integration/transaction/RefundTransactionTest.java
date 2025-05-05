@@ -48,7 +48,7 @@ public class RefundTransactionTest extends IntegrationTest {
 
     @Test
     public void testValidInput() {
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t).block();
         RefundDetails rd = new RefundDetails();
         rd.setOriginalTransactionID(String.valueOf(res.getTransactionStatus().getTransactionID()));
         rd.setTotalAmount(res.getTransactionStatus().getTotal());
@@ -59,13 +59,13 @@ public class RefundTransactionTest extends IntegrationTest {
         refund.getCustomer().getCardDetails().setNumber(null);
         refund.getCustomer().getCardDetails().setStartMonth(null);
         refund.getCustomer().getCardDetails().setStartYear(null);
-        RefundResponse refundRes = client.refund(refund);
+        RefundResponse refundRes = client.refund(refund).block();
         assertThat(refundRes.getTransactionStatus().isStatus()).isTrue();
     }
 
     @Test
     public void testInvalidInput1() {
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t).block();
         RefundDetails rd = new RefundDetails();
         rd.setOriginalTransactionID(String.valueOf(res.getTransactionStatus().getTransactionID()));
         rd.setTotalAmount(1001);
@@ -76,13 +76,13 @@ public class RefundTransactionTest extends IntegrationTest {
         refund.getCustomer().getCardDetails().setNumber(null);
         refund.getCustomer().getCardDetails().setStartMonth(null);
         refund.getCustomer().getCardDetails().setStartYear(null);
-        RefundResponse refundRes = client.refund(refund);
+        RefundResponse refundRes = client.refund(refund).block();
         assertThat(refundRes.getErrors()).contains("V6151");
     }
 
     @Test
     public void testInvalidInput2() {
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t).block();
         RefundDetails rd = new RefundDetails();
         rd.setOriginalTransactionID(String.valueOf(res.getTransactionStatus().getTransactionID()));
         refund.setRefundDetails(rd);
@@ -92,9 +92,9 @@ public class RefundTransactionTest extends IntegrationTest {
         refund.getCustomer().getCardDetails().setNumber(null);
         refund.getCustomer().getCardDetails().setStartMonth(null);
         refund.getCustomer().getCardDetails().setStartYear(null);
-        RefundResponse refundRes = client.refund(refund);
+        RefundResponse refundRes = client.refund(refund).block();
         refund.getRefundDetails().setOriginalTransactionID(String.valueOf(refundRes.getTransactionStatus().getTransactionID()));
-        RefundResponse refundRes2 = client.refund(refund);
+        RefundResponse refundRes2 = client.refund(refund).block();
         assertThat(refundRes2.getErrors()).contains("V6113");
     }
 
@@ -110,7 +110,7 @@ public class RefundTransactionTest extends IntegrationTest {
         refund.getCustomer().getCardDetails().setNumber(null);
         refund.getCustomer().getCardDetails().setStartMonth(null);
         refund.getCustomer().getCardDetails().setStartYear(null);
-        RefundResponse refundRes = client.refund(refund);
+        RefundResponse refundRes = client.refund(refund).block();
         assertThat(refundRes.getErrors()).contains("V6115");
     }
 
@@ -126,7 +126,7 @@ public class RefundTransactionTest extends IntegrationTest {
         refund.getCustomer().getCardDetails().setNumber(null);
         refund.getCustomer().getCardDetails().setStartMonth(null);
         refund.getCustomer().getCardDetails().setStartYear(null);
-        RefundResponse refundRes = client.refund(refund);
+        RefundResponse refundRes = client.refund(refund).block();
         assertThat(refundRes.getErrors()).contains("V6115");
     }
 
