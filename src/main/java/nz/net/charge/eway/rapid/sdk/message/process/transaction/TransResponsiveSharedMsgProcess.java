@@ -34,12 +34,11 @@ public class TransResponsiveSharedMsgProcess extends AbstractMakeRequestMessageP
     }
 
     @Override
-    protected Mono<CreateTransactionResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            BeanConverter<CreateAccessCodeSharedResponse, CreateTransactionResponse> converter =
-                    new AccessCodeSharedToCreateTransConverter();
-            return converter.doConvert((CreateAccessCodeSharedResponse) response);
-        });
+    protected CreateTransactionResponse makeResult(Response res) {
+
+        BeanConverter<CreateAccessCodeSharedResponse, CreateTransactionResponse> converter =
+                new AccessCodeSharedToCreateTransConverter();
+        return converter.doConvert((CreateAccessCodeSharedResponse) res);
     }
 
     @Override

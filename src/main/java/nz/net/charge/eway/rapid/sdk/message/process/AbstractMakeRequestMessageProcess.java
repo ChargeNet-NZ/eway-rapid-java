@@ -29,7 +29,7 @@ public abstract class AbstractMakeRequestMessageProcess<T, V> extends AbstractMe
         if (req != null) {
             return sendRequest(req);
         }
-        return null;
+        return Mono.empty();
     }
 
     /**

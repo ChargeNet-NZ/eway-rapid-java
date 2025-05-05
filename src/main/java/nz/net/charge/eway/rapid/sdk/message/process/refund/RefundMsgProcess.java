@@ -42,12 +42,11 @@ public class RefundMsgProcess extends AbstractMakeRequestMessageProcess<Refund, 
     }
 
     @Override
-    protected Mono<RefundResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            BeanConverter<DirectRefundResponse, RefundResponse> converter =
-                    new DirectRefundToRefundResponseConverter();
-            return converter.doConvert((DirectRefundResponse) response);
-        });
+    protected RefundResponse makeResult(Response res) {
+
+        BeanConverter<DirectRefundResponse, RefundResponse> converter =
+                new DirectRefundToRefundResponseConverter();
+        return converter.doConvert((DirectRefundResponse) res);
     }
 
 }

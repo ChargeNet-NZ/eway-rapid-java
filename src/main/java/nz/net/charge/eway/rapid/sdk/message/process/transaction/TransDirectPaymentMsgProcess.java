@@ -34,11 +34,10 @@ public class TransDirectPaymentMsgProcess extends AbstractMakeRequestMessageProc
     }
 
     @Override
-    protected Mono<CreateTransactionResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            BeanConverter<DirectPaymentResponse, CreateTransactionResponse> converter = new DirectPaymentToCreateTransConverter();
-            return converter.doConvert((DirectPaymentResponse) response);
-        });
+    protected CreateTransactionResponse makeResult(Response res) {
+
+        BeanConverter<DirectPaymentResponse, CreateTransactionResponse> converter = new DirectPaymentToCreateTransConverter();
+        return converter.doConvert((DirectPaymentResponse) res);
     }
 
     @Override

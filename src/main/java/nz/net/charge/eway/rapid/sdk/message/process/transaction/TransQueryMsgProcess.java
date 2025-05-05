@@ -30,12 +30,11 @@ public class TransQueryMsgProcess extends AbstractMessageProcess<String, QueryTr
     }
 
     @Override
-    protected Mono<QueryTransactionResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            BeanConverter<TransactionSearchResponse, QueryTransactionResponse> converter =
-                    new SearchToQueryTransConverter();
-            return converter.doConvert((TransactionSearchResponse) response);
-        });
+    protected QueryTransactionResponse makeResult(Response res) {
+
+        BeanConverter<TransactionSearchResponse, QueryTransactionResponse> converter =
+                new SearchToQueryTransConverter();
+        return converter.doConvert((TransactionSearchResponse) res);
     }
 
 }

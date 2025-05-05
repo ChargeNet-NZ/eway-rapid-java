@@ -24,12 +24,11 @@ public class CapturePaymentMsgProcess extends AbstractMakeRequestMessageProcess<
     }
 
     @Override
-    protected Mono<CreateTransactionResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            BeanConverter<CapturePaymentResponse, CreateTransactionResponse> converter =
-                    new CapturePaymentToCreateTransactionConverter();
-            return converter.doConvert((CapturePaymentResponse) response);
-        });
+    protected CreateTransactionResponse makeResult(Response res) {
+
+        BeanConverter<CapturePaymentResponse, CreateTransactionResponse> converter =
+                new CapturePaymentToCreateTransactionConverter();
+        return converter.doConvert((CapturePaymentResponse) res);
     }
 
     @Override

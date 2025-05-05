@@ -40,12 +40,10 @@ public class CustTransparentRedirectMsgProcess extends AbstractMakeRequestMessag
     }
 
     @Override
-    protected Mono<CreateCustomerResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            CreateAccessCodeResponse createAccessCodeResponse = (CreateAccessCodeResponse) response;
-            AccessCodeToCreateCustConverter converter = new AccessCodeToCreateCustConverter();
-            return converter.doConvert(createAccessCodeResponse);
-        });
+    protected CreateCustomerResponse makeResult(Response res) {
+
+        AccessCodeToCreateCustConverter converter = new AccessCodeToCreateCustConverter();
+        return converter.doConvert((CreateAccessCodeResponse) res);
     }
 
     @Override

@@ -42,11 +42,14 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
 
     public final Mono<V> doWork(T input) throws RapidSdkException {
         this.t = input;
-        Mono<? extends Response> response = processPostMsg(input);
-        if (response != null) {
-            return makeResult(response);
-        }
-        throw new SystemErrorException("Response object is null");
+        return processPostMsg(input)
+                .handle((response, sink) -> {
+                    if (response != null) {
+                        sink.next(makeResult(response));
+                    } else {
+                        sink.error(new SystemErrorException("Response object is null"));
+                    }
+                });
     }
 
     /**
@@ -186,7 +189,7 @@ public abstract class AbstractMessageProcess<T, V> implements MessageProcess<T, 
      * @return Instance of output class
      * @throws RapidSdkException base SDK exception
      */
-    protected abstract Mono<V> makeResult(Mono<? extends Response> res);
+    protected abstract V makeResult(Response res);
 
     /**
      * Get web resource object to connect to Rapid API

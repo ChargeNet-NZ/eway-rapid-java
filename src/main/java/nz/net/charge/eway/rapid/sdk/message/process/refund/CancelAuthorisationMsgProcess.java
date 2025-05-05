@@ -42,12 +42,11 @@ public class CancelAuthorisationMsgProcess extends AbstractMakeRequestMessagePro
     }
 
     @Override
-    protected Mono<RefundResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            BeanConverter<CancelAuthorisationResponse, RefundResponse> converter =
-                    new CancelAuthorisationToRefundConverter(getInput());
-            return converter.doConvert((CancelAuthorisationResponse) response);
-        });
+    protected RefundResponse makeResult(Response res) {
+
+        BeanConverter<CancelAuthorisationResponse, RefundResponse> converter =
+                new CancelAuthorisationToRefundConverter(getInput());
+        return converter.doConvert((CancelAuthorisationResponse) res);
     }
 
 }

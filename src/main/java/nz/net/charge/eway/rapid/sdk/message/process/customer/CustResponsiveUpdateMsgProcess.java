@@ -46,12 +46,10 @@ public class CustResponsiveUpdateMsgProcess extends AbstractMakeRequestMessagePr
     }
 
     @Override
-    protected Mono<CreateCustomerResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            CreateAccessCodeSharedResponse createAccessCodeSharedResponse = (CreateAccessCodeSharedResponse) response;
-            BeanConverter<CreateAccessCodeSharedResponse, CreateCustomerResponse> converter = new AccessCodeSharedToCreateCustConverter();
-            return converter.doConvert(createAccessCodeSharedResponse);
-        });
+    protected CreateCustomerResponse makeResult(Response res) {
+
+        BeanConverter<CreateAccessCodeSharedResponse, CreateCustomerResponse> converter = new AccessCodeSharedToCreateCustConverter();
+        return converter.doConvert((CreateAccessCodeSharedResponse) res);
     }
 
     @Override

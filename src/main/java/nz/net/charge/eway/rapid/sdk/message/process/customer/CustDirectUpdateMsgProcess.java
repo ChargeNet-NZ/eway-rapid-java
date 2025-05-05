@@ -50,11 +50,9 @@ public class CustDirectUpdateMsgProcess extends AbstractMakeRequestMessageProces
     }
 
     @Override
-    protected Mono<CreateCustomerResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            DirectPaymentResponse directPaymentResponse = (DirectPaymentResponse) response;
-            DirectPaymentToCreateCustConverter converter = new DirectPaymentToCreateCustConverter();
-            return converter.doConvert(directPaymentResponse);
-        });
+    protected CreateCustomerResponse makeResult(Response res) {
+
+        DirectPaymentToCreateCustConverter converter = new DirectPaymentToCreateCustConverter();
+        return converter.doConvert((DirectPaymentResponse) res);
     }
 }

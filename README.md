@@ -32,7 +32,7 @@ The eWAY Rapid Java library can be easily added to your Maven project's pom.xml:
     <dependency>
       <groupId>com.github.ChargeNet-NZ</groupId>
       <artifactId>eway-rapid-java</artifactId>
-      <version>2.0.0</version>
+      <version>2.0.1</version>
     </dependency>
 ```
 

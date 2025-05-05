@@ -30,11 +30,10 @@ public class TransTransparentRedirectMsgProcess extends AbstractMakeRequestMessa
     }
 
     @Override
-    protected Mono<CreateTransactionResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            BeanConverter<CreateAccessCodeResponse, CreateTransactionResponse> converter = new AccessCodeToCreateTransConverter();
-            return converter.doConvert((CreateAccessCodeResponse) response);
-        });
+    protected CreateTransactionResponse makeResult(Response res) {
+
+        BeanConverter<CreateAccessCodeResponse, CreateTransactionResponse> converter = new AccessCodeToCreateTransConverter();
+        return converter.doConvert((CreateAccessCodeResponse) res);
     }
 
     @Override

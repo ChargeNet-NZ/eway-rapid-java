@@ -38,12 +38,11 @@ public class QueryCustomerMsgProcess extends AbstractMakeRequestMessageProcess<S
     }
 
     @Override
-    protected Mono<QueryCustomerResponse> makeResult(Mono<? extends Response> res) {
-        return res.map(response -> {
-            BeanConverter<DirectCustomerSearchResponse, QueryCustomerResponse> converter =
-                    new DirectCustomerToQueryCustomerConverter();
-            return converter.doConvert((DirectCustomerSearchResponse) response);
-        });
+    protected QueryCustomerResponse makeResult(Response res) {
+
+        BeanConverter<DirectCustomerSearchResponse, QueryCustomerResponse> converter =
+                new DirectCustomerToQueryCustomerConverter();
+        return converter.doConvert((DirectCustomerSearchResponse) res);
     }
 
 }

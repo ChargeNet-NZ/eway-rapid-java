@@ -2,6 +2,10 @@
 
 All Notable changes will be documented in this file
 
+## 2.0.1
+
+- Fixed issue with makeRequest not being called in the correct thread
+
 ## 2.0.0
 
 - BREAKING CHANGE: Made entire SDK asynchronous to avoid nested mono errors
