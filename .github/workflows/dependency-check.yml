@@ -1,0 +1,30 @@
+name: Dependency Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to check (hash) (optional, defaults to head of master)'
+        required: false
+        type: string
+  schedule: 
+    - cron: '03 19 * * *'
+
+jobs:
+  DependencyCheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: dependency-check
+        uses: ./.github/actions/dependency-check
+        with:
+          nvd-api-key: ${{ secrets.NVD_API_KEY }}
+
+      - name: Notify Slack
+        if: failure()
+        uses: ChargeNet-NZ/pipelines/.github/actions/notify-slack@v5
+        with:
+          webhook-url: ${{ secrets.SLACK_BUILD_HAPPENS_URL }}
+          hash: ${{ inputs.version || github.sha }}
+          env: prod

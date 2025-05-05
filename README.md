@@ -22,10 +22,17 @@ For testing, get a free eWAY Partner account: https://www.eway.com.au/developers
 The eWAY Rapid Java library can be easily added to your Maven project's pom.xml:
 
 ```xml
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+
+    ...
+
     <dependency>
-      <groupId>com.ewaypayments</groupId>
+      <groupId>com.github.ChargeNet-NZ</groupId>
       <artifactId>eway-rapid-java</artifactId>
-      <version>1.4.0</version>
+      <version>1.0.0</version>
     </dependency>
 ```
 

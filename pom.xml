@@ -228,6 +228,17 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>12.1.1</version>
+                <configuration>
+                    <!-- PCI-DSS 11.2.3 fobids CVSS 4 or greater -->
+                    <failBuildOnCVSS>4</failBuildOnCVSS>
+                    <connectionTimeout>40000</connectionTimeout>
+                    <suppressionFiles>suppressions.xml</suppressionFiles>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

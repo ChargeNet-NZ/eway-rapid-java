@@ -1,0 +1,24 @@
+name: 'Dependency Check'
+description: 'Dependency Check'
+inputs:
+  nvd-api-key:
+    required: true
+    description: 'NVD API Key'
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        distribution: corretto
+        java-version: 17
+        cache: maven
+    - uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: 3.8.5
+    - name: Build
+      shell: bash
+      run: ./build.sh
+    - name: Execute Dependency Check
+      shell: bash
+      working-directory: api
+      run: mvn dependency-check:check -DnvdApiKey=${{ inputs.nvd-api-key }}
