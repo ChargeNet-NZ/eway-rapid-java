@@ -12,6 +12,7 @@ import nz.net.charge.eway.rapid.sdk.message.convert.response.AccessCodeToCreateT
 import nz.net.charge.eway.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import nz.net.charge.eway.rapid.sdk.output.CreateTransactionResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 /**
  * Create transaction with transparent redirect method message process
@@ -29,14 +30,14 @@ public class TransTransparentRedirectMsgProcess extends AbstractMakeRequestMessa
     }
 
     @Override
-    protected CreateTransactionResponse makeResult(Response res) throws RapidSdkException {
-        CreateAccessCodeResponse response = (CreateAccessCodeResponse) res;
-        BeanConverter<CreateAccessCodeResponse, CreateTransactionResponse> convert = new AccessCodeToCreateTransConverter();
-        return convert.doConvert(response);
+    protected CreateTransactionResponse makeResult(Response res) {
+
+        BeanConverter<CreateAccessCodeResponse, CreateTransactionResponse> converter = new AccessCodeToCreateTransConverter();
+        return converter.doConvert((CreateAccessCodeResponse) res);
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Mono<CreateAccessCodeResponse> sendRequest(Request req) throws RapidSdkException {
         return doPost(req, CreateAccessCodeResponse.class);
     }
 

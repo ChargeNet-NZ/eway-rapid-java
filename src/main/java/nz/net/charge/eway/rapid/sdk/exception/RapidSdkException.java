@@ -5,7 +5,7 @@ import java.io.Serial;
 /**
  * The root exception class for all business Rapid library API exceptions
  */
-public abstract class RapidSdkException extends Exception {
+public abstract class RapidSdkException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 7520026951213099151L;

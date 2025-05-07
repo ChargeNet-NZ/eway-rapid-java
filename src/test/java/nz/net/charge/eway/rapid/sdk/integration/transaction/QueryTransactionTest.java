@@ -44,14 +44,13 @@ public class QueryTransactionTest extends IntegrationTest {
         trans.setCustomer(c);
         trans.setPaymentDetails(p);
 
-        CreateTransactionResponse transResponse = client.create(
-                PaymentMethod.Direct, trans);
+        CreateTransactionResponse transResponse = client.create(PaymentMethod.Direct, trans).block();
         assertThat(transResponse.getTransactionStatus().isStatus()).isTrue();
         assertThat(transResponse.getTransactionStatus().getTransactionID()).isNotEqualTo(0);
 
         int transactionId = transResponse.getTransactionStatus()
                 .getTransactionID();
-        QueryTransactionResponse query = client.queryTransaction(transactionId);
+        QueryTransactionResponse query = client.queryTransaction(transactionId).block();
         assertThat(query.getTransactionStatus().getTransactionID()).isEqualTo(transactionId);
         assertThat(query.getTransaction().getOptions()).isNotEmpty();
         assertThat(query.getErrors() == null || query.getErrors().isEmpty()).isTrue();
@@ -61,15 +60,14 @@ public class QueryTransactionTest extends IntegrationTest {
 
     @Test
     public void testBlankInput() {
-        QueryTransactionResponse res = client.queryTransaction("");
+        QueryTransactionResponse res = client.queryTransaction("").block();
         assertThat(res.getTransactionStatus().getTransactionID() == 0 || res.getTransaction() == null).isTrue();
         assertThat(res.getTransactionStatus().getFraudAction().name()).isEqualTo(FraudAction.NotChallenged.name());
     }
 
     @Test
     public void testInvalidInput() {
-        QueryTransactionResponse res = client
-                .queryTransaction(InputModelFactory.randomString(50));
+        QueryTransactionResponse res = client.queryTransaction(InputModelFactory.randomString(50)).block();
         assertThat(res.getTransaction()).isNull();
     }
 

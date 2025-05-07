@@ -49,7 +49,7 @@ public class ResponsiveTransactionTest extends IntegrationTest {
 
     @Test
     public void testValidInput() {
-        CreateTransactionResponse res = client.create(PaymentMethod.ResponsiveShared, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.ResponsiveShared, t).block();
         assertThat(res.getSharedPaymentUrl()).isNotNull();
     }
 
@@ -64,7 +64,7 @@ public class ResponsiveTransactionTest extends IntegrationTest {
         transaction.setRedirectURL("http://www.eway.com.au");
         transaction.setCancelURL("http://www.eway.com.au");
 
-        CreateTransactionResponse res = client.create(PaymentMethod.ResponsiveShared, transaction);
+        CreateTransactionResponse res = client.create(PaymentMethod.ResponsiveShared, transaction).block();
         assertThat(res.getSharedPaymentUrl()).isNotNull();
     }
 
@@ -76,7 +76,7 @@ public class ResponsiveTransactionTest extends IntegrationTest {
         c.setCardDetails(cd);
         tran.setCustomer(c);
         tran.setTransactionType(TransactionType.Purchase);
-        CreateTransactionResponse res = client.create(PaymentMethod.ResponsiveShared, tran);
+        CreateTransactionResponse res = client.create(PaymentMethod.ResponsiveShared, tran).block();
         assertThat(res.getErrors() != null && !res.getErrors().isEmpty()).isTrue();
     }
 

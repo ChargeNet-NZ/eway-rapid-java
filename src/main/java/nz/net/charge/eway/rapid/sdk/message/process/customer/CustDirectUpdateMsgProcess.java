@@ -15,6 +15,7 @@ import nz.net.charge.eway.rapid.sdk.message.convert.response.DirectPaymentToCrea
 import nz.net.charge.eway.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import nz.net.charge.eway.rapid.sdk.util.Constant;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 /**
  * Update customer with direct payment method message process
@@ -44,14 +45,14 @@ public class CustDirectUpdateMsgProcess extends AbstractMakeRequestMessageProces
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Mono<DirectPaymentResponse> sendRequest(Request req) throws RapidSdkException {
         return doPost(req, DirectPaymentResponse.class);
     }
 
     @Override
-    protected CreateCustomerResponse makeResult(Response res) throws RapidSdkException {
-        DirectPaymentResponse response = (DirectPaymentResponse) res;
+    protected CreateCustomerResponse makeResult(Response res) {
+
         DirectPaymentToCreateCustConverter converter = new DirectPaymentToCreateCustConverter();
-        return converter.doConvert(response);
+        return converter.doConvert((DirectPaymentResponse) res);
     }
 }

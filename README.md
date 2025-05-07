@@ -32,7 +32,7 @@ The eWAY Rapid Java library can be easily added to your Maven project's pom.xml:
     <dependency>
       <groupId>com.github.ChargeNet-NZ</groupId>
       <artifactId>eway-rapid-java</artifactId>
-      <version>1.0.0</version>
+      <version>2.0.1</version>
     </dependency>
 ```
 
@@ -92,7 +92,7 @@ public class EwayRapid {
         transaction.setTransactionType(TransactionType.Purchase);
 
         PaymentMethod method = PaymentMethod.Direct;
-        CreateTransactionResponse response = client.create(method, transaction);
+        CreateTransactionResponse response = client.create(method, transaction).block();
 
         if (response.getTransactionStatus().isStatus()) {
             System.out.println("Transaction successful! ID: " + response.getTransactionStatus().getTransactionID());

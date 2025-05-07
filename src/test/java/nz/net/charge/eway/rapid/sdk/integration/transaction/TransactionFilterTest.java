@@ -44,14 +44,14 @@ public class TransactionFilterTest extends IntegrationTest {
         c.setAddress(a);
         trans.setCustomer(c);
         trans.setPaymentDetails(p);
-        CreateTransactionResponse transResponse = client.create(PaymentMethod.Direct, trans);
+        CreateTransactionResponse transResponse = client.create(PaymentMethod.Direct, trans).block();
         assertThat(transResponse.getTransactionStatus().isStatus()).isTrue();
         assertThat(transResponse.getTransactionStatus().getTransactionID()).isNotEqualTo(0);
 
         TransactionFilter filter = new TransactionFilter();
         filter.setTransactionId(transResponse.getTransactionStatus().getTransactionID());
 
-        QueryTransactionResponse res = client.queryTransaction(filter);
+        QueryTransactionResponse res = client.queryTransaction(filter).block();
         assertThat(res.getTransactionStatus().isStatus()).isTrue();
         assertThat(res.getTransactionStatus().getTransactionID())
                 .isEqualTo(transResponse.getTransactionStatus().getTransactionID());
@@ -60,7 +60,7 @@ public class TransactionFilterTest extends IntegrationTest {
     @Test
     public void testBlankInput() {
         TransactionFilter filter = new TransactionFilter();
-        QueryTransactionResponse res = client.queryTransaction(filter);
+        QueryTransactionResponse res = client.queryTransaction(filter).block();
         assertThat(res.getTransaction()).isNull();
     }
 
@@ -69,7 +69,7 @@ public class TransactionFilterTest extends IntegrationTest {
         TransactionFilter filter = new TransactionFilter();
         filter.setTransactionId(11742962);
         filter.setInvoiceNumber("Inv 21540");
-        QueryTransactionResponse res = client.queryTransaction(filter);
+        QueryTransactionResponse res = client.queryTransaction(filter).block();
         assertThat(res.getErrors()).contains("S9991");
     }
 
@@ -87,21 +87,21 @@ public class TransactionFilterTest extends IntegrationTest {
         c.setAddress(a);
         trans.setCustomer(c);
         trans.setPaymentDetails(p);
-        CreateTransactionResponse transResponse = client.create(PaymentMethod.Direct, trans);
+        CreateTransactionResponse transResponse = client.create(PaymentMethod.Direct, trans).block();
         assertThat(transResponse.getTransactionStatus().isStatus()).isTrue();
         int transacionId = transResponse.getTransactionStatus().getTransactionID();
 
         // search invoice number
         TransactionFilter filter = new TransactionFilter();
         filter.setInvoiceNumber(invoiceNum);
-        QueryTransactionResponse res = client.queryTransaction(filter);
+        QueryTransactionResponse res = client.queryTransaction(filter).block();
         assertThat(res.getTransactionStatus().isStatus()).isTrue();
         assertThat(res.getTransactionStatus().getTransactionID()).isEqualTo(transacionId);
         assertThat(res.getTransaction().getPaymentDetails().getInvoiceNumber()).isEqualTo(invoiceNum);
         // Search invoice  reference
         filter = new TransactionFilter();
         filter.setInvoiceReference(invoiceRef);
-        res = client.queryTransaction(filter);
+        res = client.queryTransaction(filter).block();
         assertThat(res.getTransactionStatus().isStatus()).isTrue();
         assertThat(res.getTransactionStatus().getTransactionID()).isEqualTo(transacionId);
         assertThat(res.getTransaction().getPaymentDetails().getInvoiceReference()).isEqualTo(invoiceRef);
@@ -122,14 +122,14 @@ public class TransactionFilterTest extends IntegrationTest {
         trans.setCustomer(c);
         trans.setPaymentDetails(p);
 
-        CreateTransactionResponse transResponse = client.create(PaymentMethod.TransparentRedirect, trans);
+        CreateTransactionResponse transResponse = client.create(PaymentMethod.TransparentRedirect, trans).block();
         String accessCode = transResponse.getAccessCode();
         assertThat(StringUtils.isBlank(accessCode)).isFalse();
 
         TransactionFilter filter = new TransactionFilter();
         filter.setAccessCode(accessCode);
 
-        QueryTransactionResponse res = client.queryTransaction(filter);
+        QueryTransactionResponse res = client.queryTransaction(filter).block();
         assertThat(res.getErrors() == null || res.getErrors().isEmpty()).isTrue();
 
     }
@@ -140,7 +140,7 @@ public class TransactionFilterTest extends IntegrationTest {
         // search invoice number
         TransactionFilter filter = new TransactionFilter();
         filter.setInvoiceNumber(invoiceNum);
-        QueryTransactionResponse res = client.queryTransaction(filter);
+        QueryTransactionResponse res = client.queryTransaction(filter).block();
         assertThat(res.getErrors() != null && !res.getErrors().isEmpty()).isTrue();
         assertThat(res.getErrors()).contains("V6171");
     }
@@ -153,7 +153,7 @@ public class TransactionFilterTest extends IntegrationTest {
         TransactionFilter filter = new TransactionFilter();
         filter.setInvoiceNumber(invoiceNum);
         filter.setInvoiceReference(invoiceRef);
-        QueryTransactionResponse res = client.queryTransaction(filter);
+        QueryTransactionResponse res = client.queryTransaction(filter).block();
         // expect error code null or empty and contain S9991: invalid parameter
         assertThat(res.getErrors() != null && !res.getErrors().isEmpty()).isTrue();
     }

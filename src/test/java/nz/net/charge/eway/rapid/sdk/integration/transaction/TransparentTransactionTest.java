@@ -42,7 +42,7 @@ public class TransparentTransactionTest extends IntegrationTest {
 
     @Test
     public void testValidInput() {
-        CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, t).block();
         assertThat(res.getFormActionUrl()).isNotNull();
     }
 
@@ -56,7 +56,7 @@ public class TransparentTransactionTest extends IntegrationTest {
         transaction.setTransactionType(TransactionType.Purchase);
         transaction.setRedirectURL("http://www.eway.com.au");
 
-        CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, transaction);
+        CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, transaction).block();
         assertThat(res.getFormActionUrl()).isNotNull();
     }
 
@@ -68,7 +68,7 @@ public class TransparentTransactionTest extends IntegrationTest {
         c.setCardDetails(cd);
         tran.setCustomer(c);
         tran.setTransactionType(TransactionType.Purchase);
-        CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, tran);
+        CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, tran).block();
         assertThat(res.getErrors()).contains("V6047");
     }
 
@@ -80,7 +80,7 @@ public class TransparentTransactionTest extends IntegrationTest {
 //		t.setCustomer(null);
         t.getPaymentDetails().setTotalAmount(-1000);
         t.getCustomer().getCardDetails().setExpiryMonth("13");
-        CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.TransparentRedirect, t).block();
         assertThat(res.getErrors()).contains("V6011");
     }
 

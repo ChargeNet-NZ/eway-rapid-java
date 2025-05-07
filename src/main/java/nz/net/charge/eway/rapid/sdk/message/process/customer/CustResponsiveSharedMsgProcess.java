@@ -14,6 +14,7 @@ import nz.net.charge.eway.rapid.sdk.message.convert.response.AccessCodeSharedToC
 import nz.net.charge.eway.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import nz.net.charge.eway.rapid.sdk.util.Constant;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 /**
  * Create customer with responsive shared method
@@ -41,14 +42,14 @@ public class CustResponsiveSharedMsgProcess extends AbstractMakeRequestMessagePr
     }
 
     @Override
-    protected CreateCustomerResponse makeResult(Response res) throws RapidSdkException {
-        CreateAccessCodeSharedResponse response = (CreateAccessCodeSharedResponse) res;
+    protected CreateCustomerResponse makeResult(Response res) {
+
         BeanConverter<CreateAccessCodeSharedResponse, CreateCustomerResponse> converter = new AccessCodeSharedToCreateCustConverter();
-        return converter.doConvert(response);
+        return converter.doConvert((CreateAccessCodeSharedResponse) res);
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Mono<? extends Response> sendRequest(Request req) throws RapidSdkException {
         return doPost(req, CreateAccessCodeSharedResponse.class);
     }
 

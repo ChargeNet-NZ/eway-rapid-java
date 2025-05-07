@@ -1,6 +1,7 @@
 package nz.net.charge.eway.rapid.sdk.message.process;
 
 import nz.net.charge.eway.rapid.sdk.exception.RapidSdkException;
+import reactor.core.publisher.Mono;
 
 /**
  * Base interface for all Rapid message process classes. It defines the abstract
@@ -17,5 +18,5 @@ public interface MessageProcess<T, V> {
      * @throws RapidSdkException The exception that indicates when there is a
      * business logic error
      */
-    V doWork(T input) throws RapidSdkException;
+    Mono<V> doWork(T input) throws RapidSdkException;
 }

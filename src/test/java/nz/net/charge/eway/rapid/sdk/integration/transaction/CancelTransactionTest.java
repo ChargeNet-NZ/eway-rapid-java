@@ -48,11 +48,11 @@ public class CancelTransactionTest extends IntegrationTest {
     @Test
     public void testValidInput() {
         t.setCapture(false);
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t).block();
         RefundDetails rd = new RefundDetails();
         rd.setOriginalTransactionID(String.valueOf(res.getTransactionStatus().getTransactionID()));
         refund.setRefundDetails(rd);
-        RefundResponse cancelRes = client.cancel(refund);
+        RefundResponse cancelRes = client.cancel(refund).block();
         assertThat(cancelRes.getTransactionStatus().isStatus()).isTrue();
     }
 
@@ -61,19 +61,19 @@ public class CancelTransactionTest extends IntegrationTest {
         RefundDetails rd = new RefundDetails();
         rd.setOriginalTransactionID("20400723");
         refund.setRefundDetails(rd);
-        RefundResponse cancelRes = client.cancel(refund);
+        RefundResponse cancelRes = client.cancel(refund).block();
         assertThat(cancelRes.getErrors()).contains("V6134");
     }
 
     @Test
     public void testInvalidInput2() {
-        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t);
+        CreateTransactionResponse res = client.create(PaymentMethod.Direct, t).block();
         t.setAuthTransactionID(res.getTransactionStatus().getTransactionID());
-        CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t);
+        CreateTransactionResponse authRes = client.create(PaymentMethod.Authorisation, t).block();
         RefundDetails rd = new RefundDetails();
         rd.setOriginalTransactionID(String.valueOf(res.getTransactionStatus().getTransactionID()));
         refund.setRefundDetails(rd);
-        RefundResponse cancelRes = client.cancel(refund);
+        RefundResponse cancelRes = client.cancel(refund).block();
         assertThat(cancelRes.getTransactionStatus().isStatus()).isFalse();
     }
 

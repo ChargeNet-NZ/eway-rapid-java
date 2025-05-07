@@ -10,6 +10,7 @@ import nz.net.charge.eway.rapid.sdk.message.convert.response.DirectCustomerToQue
 import nz.net.charge.eway.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import nz.net.charge.eway.rapid.sdk.output.QueryCustomerResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 /**
  * Query customer message process
@@ -32,15 +33,16 @@ public class QueryCustomerMsgProcess extends AbstractMakeRequestMessageProcess<S
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Mono<DirectCustomerSearchResponse> sendRequest(Request req) throws RapidSdkException {
         return doPost(req, DirectCustomerSearchResponse.class);
     }
 
     @Override
-    protected QueryCustomerResponse makeResult(Response res) throws RapidSdkException {
-        DirectCustomerSearchResponse response = (DirectCustomerSearchResponse) res;
-        BeanConverter<DirectCustomerSearchResponse, QueryCustomerResponse> convert = new DirectCustomerToQueryCustomerConverter();
-        return convert.doConvert(response);
+    protected QueryCustomerResponse makeResult(Response res) {
+
+        BeanConverter<DirectCustomerSearchResponse, QueryCustomerResponse> converter =
+                new DirectCustomerToQueryCustomerConverter();
+        return converter.doConvert((DirectCustomerSearchResponse) res);
     }
 
 }
