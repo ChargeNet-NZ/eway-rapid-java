@@ -6,7 +6,7 @@
 
     <groupId>nz.net.charge</groupId>
     <artifactId>eway-rapid-java</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <packaging>jar</packaging>
 
     <name>eWAY Rapid API Library</name>
@@ -59,6 +59,17 @@
     </properties>
 
     <dependencies>
+
+        <!-- Security Overrides For Sub Dependencies -->
+
+        <!-- CVE-2025-48734 -->
+        <!-- Sub dependency of commons-validator -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.11.0</version>
+        </dependency>
+
         <!-- A bundle containing code of all jar-based modules that provide JAX-RS
         and WebFlux related features -->
         <dependency>
@@ -231,7 +242,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>12.1.1</version>
+                <version>12.1.2</version>
                 <configuration>
                     <!-- PCI-DSS 11.2.3 fobids CVSS 4 or greater -->
                     <failBuildOnCVSS>4</failBuildOnCVSS>
