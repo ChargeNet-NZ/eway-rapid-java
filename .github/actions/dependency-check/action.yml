@@ -20,5 +20,4 @@ runs:
       run: ./build.sh
     - name: Execute Dependency Check
       shell: bash
-      working-directory: api
       run: mvn dependency-check:check -DnvdApiKey=${{ inputs.nvd-api-key }}
