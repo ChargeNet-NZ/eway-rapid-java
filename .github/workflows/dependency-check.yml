@@ -23,8 +23,8 @@ jobs:
 
       - name: Notify Slack
         if: failure()
-        uses: ChargeNet-NZ/pipelines/.github/actions/notify-slack@v5
+        uses: ./.github/actions/notify-slack
         with:
           webhook-url: ${{ secrets.SLACK_BUILD_HAPPENS_URL }}
           hash: ${{ inputs.version || github.sha }}
-          env: prod
+          env: EWay Rapid Java SDK

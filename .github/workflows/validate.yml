@@ -41,4 +41,4 @@ jobs:
         with:
           webhook-url: ${{ secrets.SLACK_BUILD_HAPPENS_URL }}
           hash: ${{ needs.Setup.outputs.version }}
-          env: API Server
+          env: EWay Rapid Java SDK

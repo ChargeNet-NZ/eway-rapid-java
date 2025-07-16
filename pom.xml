@@ -126,6 +126,11 @@
             <version>${jackson-bom.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-bom.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.6</version>
@@ -242,7 +247,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>12.1.2</version>
+                <version>12.1.3</version>
                 <configuration>
                     <!-- PCI-DSS 11.2.3 fobids CVSS 4 or greater -->
                     <failBuildOnCVSS>4</failBuildOnCVSS>

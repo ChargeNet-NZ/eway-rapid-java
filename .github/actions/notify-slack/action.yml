@@ -26,7 +26,7 @@ runs:
   using: "composite"
   steps:
     - name: Notify Slack Finished
-      uses: slackapi/slack-github-action@v1.18.0
+      uses: slackapi/slack-github-action@v2.1.1
       with:
         payload: |
           { "attachments": [
@@ -53,6 +53,5 @@ runs:
                 ]
               }
           ]}
-      env:
-        SLACK_WEBHOOK_URL: ${{ inputs.webhook-url }}
-        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        webhook: ${{ inputs.webhook-url }}
+        webhook-type: incoming-webhook

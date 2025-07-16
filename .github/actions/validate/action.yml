@@ -9,7 +9,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-java@v4
+    - uses: actions/setup-java@v4.7.1
       with:
         distribution: corretto
         java-version: 17
@@ -23,7 +23,7 @@ runs:
     - name: Run Tests
       shell: bash
       run: mvn --fail-fast clean test
-    - uses: mikepenz/action-junit-report@v3
+    - uses: mikepenz/action-junit-report@v5.6.2
       if: always()
       with:
         report_paths: '**/surefire-reports/TEST-*.xml'
