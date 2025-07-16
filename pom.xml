@@ -6,7 +6,7 @@
 
     <groupId>nz.net.charge</groupId>
     <artifactId>eway-rapid-java</artifactId>
-    <version>2.0.2</version>
+    <version>2.0.3</version>
     <packaging>jar</packaging>
 
     <name>eWAY Rapid API Library</name>
@@ -50,7 +50,7 @@
     </distributionManagement>
     
     <properties>
-        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
         <jackson-bom.version>2.15.0</jackson-bom.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
