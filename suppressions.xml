@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-    <suppress until="2025-09-01Z">
+    <suppress until="2025-10-01Z">
        <notes><![CDATA[
        file name: snakeyaml-1.33.jar
        CN-3962 will be fixed in SpringFramework 3.0.2, see Epic CN-3754
@@ -16,7 +16,7 @@
         <sha1>0d41caa3a4e9f85382702a059a65c512f85ac230</sha1>
         <cve>CVE-2023-35116</cve>
     </suppress>
-    <suppress until="2025-09-01Z">
+    <suppress until="2025-10-01Z">
        <notes><![CDATA[
        Various Spring Dependencies
        CN-6389
@@ -32,7 +32,7 @@
        <cve>CVE-2025-22233</cve>
        <cve>CVE-2025-41234</cve>
     </suppress>
-    <suppress until="2025-09-01Z">
+    <suppress until="2025-10-01Z">
        <notes><![CDATA[
        Various Netty Dependencies (From the web flux dependency)
        CN-7305
@@ -43,7 +43,7 @@
        <cve>CVE-2025-24970</cve>
        <cve>CVE-2025-22227</cve>
     </suppress>
-    <suppress until="2025-09-01Z">
+    <suppress until="2025-10-01Z">
        <notes><![CDATA[
        file name: logback-core-1.4.11.jar
        CN-6677
@@ -52,12 +52,28 @@
        <vulnerabilityName>CVE-2023-6378</vulnerabilityName>
        <vulnerabilityName>CVE-2024-12798</vulnerabilityName>
     </suppress>
-    <suppress until="2025-09-01Z">
+    <suppress until="2025-10-01Z">
        <notes><![CDATA[
        file name: logback-classic-1.4.11.jar
        CN-6677
        ]]></notes>
        <sha1>54450c0c783e896a1a6d88c043bd2f1daba1c382</sha1>
        <cve>CVE-2023-6378</cve>
+    </suppress>
+    <suppress until="2025-10-01Z">
+        <notes><![CDATA[
+      file name: spring-core-6.0.14.jar
+      CN-7411
+      ]]></notes>
+        <sha1>002c848d79cab58588f7c77290e5d0fa4dba57a4</sha1>
+        <cve>CVE-2025-41242</cve>
+    </suppress>
+    <suppress until="2025-10-01Z">
+        <notes><![CDATA[
+      file name: netty-codec-http2-4.1.101.Final.jar
+      CN-7412
+      ]]></notes>
+        <sha1>40590da6c615b852384542051330e9fd51d4c4b1</sha1>
+        <cve>CVE-2025-55163</cve>
     </suppress>
 </suppressions>
