@@ -76,4 +76,20 @@
         <sha1>40590da6c615b852384542051330e9fd51d4c4b1</sha1>
         <cve>CVE-2025-55163</cve>
     </suppress>
+    <suppress until="2025-10-01Z">
+        <notes><![CDATA[
+          file name: netty-codec-4.1.101.Final.jar
+          CN-7412
+          ]]></notes>
+        <sha1>642523c57c4be15b8b461be7b1532262d193bbb3</sha1>
+        <cve>CVE-2025-58057</cve>
+    </suppress>
+    <suppress until="2025-10-01Z">
+        <notes><![CDATA[
+          file name: netty-codec-http-4.1.101.Final.jar
+          CN-7412
+          ]]></notes>
+        <sha1>c648f863b301e3fc62d0de098ec61be7628b8ea2</sha1>
+        <cve>CVE-2025-58056</cve>
+    </suppress>
 </suppressions>
