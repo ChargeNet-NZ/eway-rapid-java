@@ -62,9 +62,11 @@
     </suppress>
     <suppress until="2025-10-01Z">
         <notes><![CDATA[
-      file name: spring-core-6.0.14.jar
-      CN-7411
-      ]]></notes>
+          file name: spring-core-6.0.14.jar
+          Shouldn't affect us:
+          From the vulnerability description:
+          "We have verified that applications deployed on Apache Tomcat or Eclipse Jetty are not vulnerable"
+          ]]></notes>
         <sha1>002c848d79cab58588f7c77290e5d0fa4dba57a4</sha1>
         <cve>CVE-2025-41242</cve>
     </suppress>
