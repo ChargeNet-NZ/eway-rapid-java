@@ -233,7 +233,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>12.1.6</version>
+                <version>12.1.8</version>
                 <configuration>
                     <!-- PCI-DSS 11.2.3 fobids CVSS 4 or greater -->
                     <failBuildOnCVSS>4</failBuildOnCVSS>
