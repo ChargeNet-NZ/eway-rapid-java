@@ -26,7 +26,7 @@ runs:
   using: "composite"
   steps:
     - name: Notify Slack Finished
-      uses: slackapi/slack-github-action@v2.1.1
+      uses: slackapi/slack-github-action@v4
       with:
         payload: |
           { "attachments": [
